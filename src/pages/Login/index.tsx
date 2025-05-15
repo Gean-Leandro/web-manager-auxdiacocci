@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../../firebaseConfig';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { Notification } from '../../components/Notification';
 import { AccountService } from '../../services/accountService';
 import logo from '../../assets/Logo.png';
@@ -27,7 +26,23 @@ export function Login() {
     try {
       if (email !== "" && password !== ""){
         await signInWithEmailAndPassword(auth, email, password);
-        navigate('/dashboard');
+
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+              const uid = user.uid;
+              const account = await AccountService.getAccount(uid);
+              
+              if (account.active) {
+                navigate('/dashboard');
+              } else {
+                setShowNotification({
+                  active: true, 
+                  mensage: "Conta inativada", 
+                  bgColor: "bg-orange-500"
+                })
+              }
+          } 
+      })
 
       } else {
         setShowNotification({
@@ -70,7 +85,7 @@ export function Login() {
       <div className="bg-[#103356] w-2/3"></div>
       
       {/* Painel de login à direita */}
-      <div className="bg-white w-1/3 p-8 flex flex-col h-[100%] justify-center" style={{borderRadius: 20}}>
+      <div className="bg-white w-1/3 p-8 flex flex-col h-[100%] justify-center">
         <div></div>
         {/* Logo */}
         <div className="mb-12 flex justify-center items-center">

@@ -6,6 +6,7 @@ import logo from '../../assets/Logo.png';
 
 interface ISidebar {
     levelAccount: string,
+    selected: number,
 }
 
 export function Sidebar(props:ISidebar){
@@ -30,43 +31,43 @@ export function Sidebar(props:ISidebar){
             <nav className="flex-grow">
             <ul className="space-y-2">
                 <li>
-                <Link to={'/dashboard'} className="flex items-center px-4 py-3 text-white bg-blue-800">
+                <Link to={'/dashboard'} className={`${props.selected === 1 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3`}>
                     <LayoutDashboard className="mr-3" size={20} />
                     <span>Dashboard</span>
                 </Link>
                 </li>
                 <li>
-                <Link to={'/eimerias'} className="flex items-center px-4 py-3 text-gray-300 hover:bg-blue-800 hover:text-white">
+                <Link to={'/eimerias'} className={`${props.selected === 2 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3 hover:bg-blue-800 hover:text-white`}>
                     <Egg className="mr-3" size={20} />
                     <span>Eimeria</span>
                 </Link>
                 </li>
                 <li>
-                <Link to={'/glossario'} className="flex items-center px-4 py-3 text-gray-300 hover:bg-blue-800 hover:text-white">
+                <Link to={'/glossario'} className={`${props.selected === 3 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3 hover:bg-blue-800 hover:text-white`}>
                     <BookOpen className="mr-3" size={20} />
                     <span>Glossário</span>
                 </Link>
                 </li>
                 <li>
-                <Link to={'/nomes-cientificos'} className="flex items-center px-4 py-3 text-gray-300 hover:bg-blue-800 hover:text-white">
+                <Link to={'/nomes-cientificos'} className={`${props.selected === 4 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3 hover:bg-blue-800 hover:text-white`}>
                     <Microscope className="mr-3" size={20} />
                     <span>Nomes científicos</span>
                 </Link>
                 </li>
                 <li>
-                <Link to={'/referencias'} className="flex items-center px-4 py-3 text-gray-300 hover:bg-blue-800 hover:text-white">
+                <Link to={'/referencias'} className={`${props.selected === 5 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3 hover:bg-blue-800 hover:text-white`}>
                     <FileText className="mr-3" size={20} />
                     <span>Referências</span>
                 </Link>
                 </li>
                 <li>
-                <Link to={'/perfil'} className="flex items-center px-4 py-3 text-gray-300 hover:bg-blue-800 hover:text-white">
+                <Link to={'/perfil'} className={`${props.selected === 6 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3 hover:bg-blue-800 hover:text-white`}>
                     <User className="mr-3" size={20} />
                     <span>Perfil</span>
                 </Link>
                 </li>
                 <li>
-                <Link to={'/contas'} className={`${props.levelAccount !== "admin"? "hidden" : ""} flex items-center px-4 py-3 text-gray-300 hover:bg-blue-800 hover:text-white`}>
+                <Link to={'/contas'} className={`${props.levelAccount !== "admin"? "hidden" : ""} ${props.selected === 7 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3 hover:bg-blue-800 hover:text-white`}>
                     <UserCog className="mr-3" size={20} />
                     <span>Contas</span>
                 </Link>

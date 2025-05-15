@@ -200,7 +200,7 @@ export function Glossary() {
         )}
 
         <div className="flex h-screen bg-gray-100">
-            <Sidebar levelAccount={login}/>
+            <Sidebar levelAccount={login} selected={3}/>
             <div className="flex-grow overflow-auto">
                 {/* Header */}
                 <div className="flex items-center p-6">

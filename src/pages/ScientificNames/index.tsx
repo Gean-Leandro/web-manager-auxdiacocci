@@ -5,6 +5,7 @@ import { ScientificNamesService, IScientificNames } from "../../services/scienti
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { AccountService } from "../../services/accountService";
+import { Check, Edit2, Eye, Microscope, Plus, Trash2, X } from "lucide-react";
 
 export function ScientificNames() {
     const [scientificNames, setScientificNames] = useState<IScientificNames[]>([]);
@@ -195,42 +196,43 @@ export function ScientificNames() {
             />
         )}
 
-        <div className="grid grid-cols-[250px_1fr] h-screen">
-            <Sidebar levelAccount={login}/>
-            <div className="px-[15svh] overflow-y-auto">
-                <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
-                    NOMES CIENTÍFICOS
+<div className="flex h-screen bg-gray-100">
+            <Sidebar levelAccount={login} selected={4}/>
+            <div className="flex-grow overflow-auto">
+                {/* Header */}
+                <div className="flex items-center p-6">
+                    <div className="p-2">
+                        <div className="flex gap-1 mb-2 justify-start items-center">
+                            <Microscope className="mr-3 text-blue-600" size={35} />
+                            <h1 className="text-2xl font-bold">Nomes Científicos</h1>
+                        </div>
+                        <p className="text-gray-500">Gerencie os nomes científicos cadastrados.</p>
+                    </div>
                 </div>
 
-                <div className={`flex items-center justify-start mt-[10%]`}>
-                    <div className="bg-mygray-200 p-2 rounded-[8px] border-[2px] border-mygray-500">
 
-                        {/* Campo buscar */}
-                        <div className={`${!fieldBusca && 'hidden'} mb-2 w-[100%] flex justify-center items-center`}>
-                            <input className="bg-white border-[2px] border-r-[0px] border-mygray-500 rounded-l-[8px] pl-2 h-[35px] w-[230px]"
-                            type="text" 
-                            placeholder="Nome científico"
-                            onChange={(e) => setBusca(e.target.value)}/>
-                            <button type="button" onClick={handleBuscar}
-                                className="bg-mygray-900 hover:bg-mygray-600 text-white font-bold h-[35px] w-[100px]  rounded-r-[8px]">
-                                BUSCAR
-                            </button>
-                        </div>
+                {/* Content */}
+                <div className="p-6">
+                    <div className="bg-white rounded-lg border shadow-lg overflow-hidden">
 
                         {/* Campo editar */}
-                        <div className={`${fieldBusca && 'hidden'} mb-2 ${editScientificName === true ? "min-w-[500px]": "min-w-[400px]"}`}>
-                            <div className="w-[100%] flex justify-between mb-2">
-                                <input className={`bg-white border-[2px] border-mygray-500 rounded-[8px] pl-2 h-[35px] ${editScientificName == true ? "w-[55%]": "w-[80%]"}`}
+                        <div className={`${fieldBusca && 'hidden'} p-4 border-b`}>
+                            <div className="pb-4 border-b bg-white">
+                                <h2 className="text-lg font-semibold">{!editScientificName ? "Preencha o formulário": "Editando"}</h2>
+                            </div>
+
+                            <div className="w-[100%] flex justify-between pt-4">
+                                <input className={`pl-4 pr-24 py-2 border border-gray-500 rounded ${editScientificName == true ? "w-[78%]": "w-[89%]"}`}
                                 type="text" 
                                 value={scientificNameItem.name}
-                                placeholder="Nome científico"
-                                onChange={(e) => setScientificNameItem((prev) => ({...prev, name:e.target.value}))}/>
+                                placeholder="Palavra"
+                                onChange={(e) => setScientificNameItem((prev) => ({...prev, word:e.target.value}))}/>
 
                                 {/* Adicionar Button */}
                                 <button
                                     onClick={addNewScientificName}
                                     type="button" 
-                                    className={`${editScientificName && "hidden"} bg-mygray-900 flex items-center justify-center h-[35px] w-[19%] rounded-[8px] hover:bg-mygray-600`}>
+                                    className={`${editScientificName && "hidden"} w-[10%] flex items-center justify-center px-4 py-2 border-[2px] border-black bg-black rounded text-white hover:bg-mygray-600`}>
                                     <img width={25} height={25} src="\src\assets\AddWhite.png" alt="" />
                                 </button>
 
@@ -241,8 +243,8 @@ export function ScientificNames() {
                                         setScientificNameItem({id:'', name:''});
                                     }}
                                     type="button" 
-                                    className={`${!editScientificName && "hidden"} bg-mygray-900 flex items-center justify-center text-white font-bold h-[35px] w-[22%] rounded-[8px] hover:bg-mygray-600`}>
-                                    CANCELAR
+                                    className={`${!editScientificName && "hidden"} w-[10%] text-red-500 hover:text-red-700 bg-red-200 flex items-center justify-center rounded-[8px]`}>
+                                    <X size={20}/>
                                 </button>
 
                                 {/* Salvar Button */}
@@ -250,75 +252,82 @@ export function ScientificNames() {
                                     disabled={disableButton}
                                     onClick={updateScientificName}
                                     type="button" 
-                                    className={`${!editScientificName && "hidden"} bg-green-600 flex items-center justify-center text-white font-bold h-[35px] w-[22%] rounded-[8px] hover:bg-green-500`}>
-                                    SALVAR
+                                    className={`${!editScientificName && "hidden"} w-[10%] text-green-500 hover:text-green-700 flex items-center bg-green-200 justify-center rounded-[8px]`}>
+                                    <Check size={20}/>
                                 </button>
                             </div>
                         </div>
-                        <div className="bg-white rounded-[8px] p-2 border-[2px] border-mygray-500">
-                            <div className="h-[40svh]  overflow-y-auto w-[100%]">
-                                {filtradas.length > 0 ? 
-                                <ul>
-                                    { filtradas.map((item) => (
-                                        <li className="p-2 border-b flex capitalize items-center justify-between">
-                                        {item.name}
-                                        <div className="flex items-center gap-2 *:p-1">
-                                            <button type="button"
-                                                onClick={() => {
-                                                    setScientificNameItem(item);
-                                                    setFieldBusca(false);
-                                                    setEditScientificName(true);
-                                                }} 
-                                                className={`${login !== "admin"? "hidden" : ""} ${editScientificName && scientificNameItem.id === item.id ? "hidden": ""} hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]`}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Pencil-1--Streamline-Ultimate" height="24" width="24"><desc>Pencil 1 Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M22.19 1.81002c-0.3406 -0.33916 -0.7449 -0.60748 -1.1898 -0.78945 -0.4449 -0.181969 -0.9214 -0.273985 -1.402 -0.270731 -0.4806 0.003255 -0.9558 0.101715 -1.3982 0.289691 -0.4423 0.18798 -0.8431 0.46175 -1.179 0.80549L2.521 16.345 0.75 23.25l6.905 -1.771 14.5 -14.49998c0.3437 -0.33593 0.6175 -0.73665 0.8055 -1.17901 0.188 -0.44235 0.2864 -0.91756 0.2897 -1.39819 0.0032 -0.48063 -0.0888 -0.95713 -0.2707 -1.40199 -0.182 -0.44486 -0.4503 -0.84925 -0.7895 -1.18981Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m16.606 2.26001 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m14.512 4.354 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m2.521 16.345 5.139 5.129" stroke-width="1.5"></path></svg>
-                                            </button>
-                                           
-                                            <button 
-                                                type="button"
-                                                onClick={() => {
-                                                    setConfirmModal(true);
-                                                    setIdDelet(item.id);
-                                                }} 
-                                                className={`${login !== "admin"? "hidden" : ""} hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]`}>
-                                                <svg width="25" height="25" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <g clip-path="url(#clip0_100_271)">
-                                                    <path d="M0.833252 4.1665H19.1666" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <path d="M11.875 0.833496H8.125C7.79348 0.833496 7.47553 0.965196 7.24112 1.19961C7.0067 1.43403 6.875 1.75198 6.875 2.0835V4.16683H13.125V2.0835C13.125 1.75198 12.9933 1.43403 12.7589 1.19961C12.5245 0.965196 12.2065 0.833496 11.875 0.833496Z" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <path d="M8.125 14.7915V8.5415" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <path d="M11.875 14.7915V8.5415" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <path d="M15.7167 18.0165C15.6935 18.3297 15.5525 18.6224 15.3221 18.8358C15.0917 19.0492 14.789 19.1673 14.475 19.1665H5.525C5.21098 19.1673 4.90828 19.0492 4.67789 18.8358C4.4475 18.6224 4.30652 18.3297 4.28333 18.0165L3.125 4.1665H16.875L15.7167 18.0165Z" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    </g>
-                                                    <defs>
-                                                    <clipPath id="clip0_100_271">
-                                                    <rect width="20" height="20" fill="white"/>
-                                                    </clipPath>
-                                                    </defs>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </li>
-                                    )) }
-                                </ul>
-                            :   <div className="h-[100%] w-[100%] flex justify-center items-center text-mygray-700">
-                                    Nenhum nome científico cadastrado
+
+                        <div className="p-4 border-b bg-white">
+                            <h2 className="text-lg font-semibold">Lista de nomes científicos</h2>
+                        </div>
+                        
+                        {/* Search and Add */}
+                        <div className="p-4 bg-gray-100">
+                            <div className="flex items-center">
+                                <div className="relative flex-grow">
+                                <input
+                                    type="text"
+                                    placeholder="Palavra"
+                                    className="w-full pl-4 pr-24 py-2 border border-gray-500 rounded"
+                                    value={busca}
+                                    onChange={(e) => setBusca(e.target.value)}
+                                />
+                                <button type="button" 
+                                    onClick={handleBuscar} 
+                                    className="absolute right-0 top-0 h-full px-3 hover:bg-blue-800 bg-blue-600 text-white rounded-r">
+                                    BUSCAR
+                                </button>
                                 </div>
-                            }
                             </div>
                         </div>
-                        <div className="flex justify-end mt-2">
-                            <button type="button"
-                                onClick={() => setFieldBusca(false)}
-                                className={`${!fieldBusca && "hidden"} border-[2px] flex gap-2 border-black rounded-[8px] py-2 px-4 font-bold hover:bg-white`}>
-                                CADASTRAR 
-                                <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M13.5 1C13.5 0.447715 13.0523 0 12.5 0C11.9477 0 11.5 0.447715 11.5 1H13.5ZM11.5 22.2789C11.5 22.8312 11.9477 23.2789 12.5 23.2789C13.0523 23.2789 13.5 22.8312 13.5 22.2789H11.5ZM1 10.6395C0.447715 10.6395 0 11.0872 0 11.6395C0 12.1917 0.447715 12.6395 1 12.6395V10.6395ZM24 12.6395C24.5523 12.6395 25 12.1917 25 11.6395C25 11.0872 24.5523 10.6395 24 10.6395V12.6395ZM11.5 1V11.6395H13.5V1H11.5ZM11.5 11.6395V22.2789H13.5V11.6395H11.5ZM12.5 10.6395H1V12.6395H12.5V10.6395ZM1 12.6395H23.2581V10.6395H1V12.6395ZM23.2581 12.6395H23.629V10.6395H23.2581V12.6395ZM23.629 12.6395H24V10.6395H23.629V12.6395Z" fill="black"/>
-                                </svg>
-                            </button>
+                        
+                        {/* Species List - Simple Version like second image */}
+                        <div className="max-h-80 overflow-y-auto">
+                        {filtradas.length !== 0 ? filtradas.map((item) => (
+                            <div 
+                            key={item.id} 
+                            className="flex items-center justify-between p-3 border-b hover:bg-gray-50"
+                            >
+                            <div className="font-medium">{item.name}</div>
                             
+                            <div className="flex space-x-2">
+                                <button type="button" onClick={() => {
+                                        setScientificNameItem(item);
+                                        setFieldBusca(false);
+                                        setEditScientificName(true);
+                                    }} className={`${login !== "admin"? "hidden" : ""} ${editScientificName && scientificNameItem.id === item.id ? "hidden": ""}  p-1 text-gray-600 hover:text-blue-600`}>
+                                    <Edit2 size={18} />
+                                </button>
+                                
+                                <button type="button"
+                                        onClick={() => {
+                                            setConfirmModal(true);
+                                            setIdDelet(item.id);
+                                        }} 
+                                        className={`${login !== "admin"? "hidden" : ""} p-1 text-red-500 hover:text-red-700`}>
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
+                            </div>
+                        ))
+                        :   <div className="h-[100%] w-[100%] py-10 flex justify-center items-center text-mygray-700">
+                                Nenhum nome científico cadastrado
+                            </div>
+                        }
+                        </div>
+                        
+                        {/* Cadastrar Button */}
+                        <div className="p-4 border-t flex justify-end gap-2 items-center">
                             <button type="button"
                                 onClick={() => setFieldBusca(true)}
-                                className={`${fieldBusca && "hidden"} border-[2px] flex gap-2 border-black rounded-[8px] py-2 px-4 font-bold hover:bg-white`}>
+                                className={`${fieldBusca && "hidden"} flex items-center px-4 py-2 border-slate-500 border-[2px] rounded bg-white hover:bg-gray-100`}>
                                 CANCELAR
+                            </button>
+                            <button type="button"
+                                onClick={() => setFieldBusca(false)} className={`${!fieldBusca && "hidden"} flex items-center px-4 py-2 border-[2px] border-black bg-black rounded text-white hover:bg-mygray-600`}>
+                                <Plus size={18} className="mr-1" />
+                                <span>CADASTRAR</span>
                             </button>
                         </div>
                     </div>

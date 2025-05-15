@@ -94,7 +94,7 @@ export function Eimerias(){
         )}
 
         <div className="flex h-screen bg-gray-100">
-            <Sidebar levelAccount={login}/>
+            <Sidebar levelAccount={login} selected={2}/>
             <div className="flex-grow overflow-auto">
                 {/* Header */}
                 <div className="flex items-center p-6">
@@ -147,9 +147,9 @@ export function Eimerias(){
                                 <Link to={'/atualizar-eimeria'} state={specie} className={`${login !== "admin"? "hidden" : ""} p-1 text-gray-600 hover:text-blue-600`}>
                                     <Edit2 size={18} />
                                 </Link>
-                                <button type="button" className="p-1 text-gray-600 hover:text-blue-600">
+                                <Link to={'/visualizar-eimeria'} state={specie} className="p-1 text-gray-600 hover:text-blue-600">
                                     <Eye size={18} />
-                                </button>
+                                </Link>
                                 <button type="button"
                                         onClick={() => {
                                             setConfirmModal(true);
@@ -168,11 +168,11 @@ export function Eimerias(){
                         </div>
                         
                         {/* Cadastrar Button */}
-                        <div className="p-4 border-t flex justify-start items-center">
-                        <Link to={'/nova-eimeria'} className="flex items-center px-4 py-2 border-slate-500 border-[2px] rounded bg-white hover:bg-gray-100">
-                            <Plus size={18} className="mr-1" />
-                            <span>CADASTRAR</span>
-                        </Link>
+                        <div className="p-4 border-t flex justify-end items-center">
+                            <Link to={'/nova-eimeria'} className="flex items-center px-4 py-2 border-[2px] border-black bg-black rounded text-white hover:bg-mygray-600">
+                                <Plus size={18} className="mr-1" />
+                                <span>CADASTRAR</span>
+                            </Link>
                         </div>
                     </div>
                 </div>

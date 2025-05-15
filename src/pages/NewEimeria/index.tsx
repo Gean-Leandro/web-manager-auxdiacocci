@@ -177,7 +177,7 @@ export function NewEimeria(){
         {loading && <ScreamLoading />}
         
         <div className="flex h-screen bg-gray-100">
-            <Sidebar levelAccount={login}/>
+            <Sidebar levelAccount={login} selected={2}/>
             {/* Main Content */}
             <div className="flex-1 overflow-y-auto p-6">
                 <div className="flex items-center py-6">
@@ -286,7 +286,7 @@ export function NewEimeria(){
                 </div>
                 
                 <div className="mb-6">
-                    <DynamicListInput title="SINAIS CLÍNICOS E SINAIS MACROSCÓPICOS"  
+                    <DynamicListInput title="SINAIS CLÍNICOS E SINAIS MACROSCÓPICOS:"  
                         placeholder="Sinais" 
                         textEmptyReport="Nenhum sinal disponível" 
                         list={eimeria.clinical_signs} 

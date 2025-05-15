@@ -5,6 +5,7 @@ import { AccountService, IAccount } from "../../services/accountService";
 import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
+import { UserCog } from "lucide-react";
 
 export function NewAccount() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
@@ -106,145 +107,154 @@ export function NewAccount() {
             />
         )}
 
-        <div className="grid grid-cols-[250px_1fr] h-screen">
-            <Sidebar levelAccount={login}/>
-            <div className="px-[15svh] overflow-y-auto">
-                <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
-                    NOVA CONTA
-                </div>
 
-                <div className="flex items-center justify-start mt-[10%] mb-16">
-                    <div className="bg-mygray-200 p-4 rounded-[8px] border-[2px] border-mygray-500">
-
-                        {/* Campo Nome */}
-                        <div className="mb-6 w-[100%]">
-                            <p>Name:</p> 
-                            <input className={`${erro.campo === "name" ? 'border-red-600': 'border-mygray-500'} bg-white border-[2px]  rounded-[8px] pl-2 h-[35px] w-[400px]`}
-                            type="text" 
-                            placeholder="Nome"
-                            onChange={(e) => setAccountItem((prev) => ({...prev, name:e.target.value}))}
-                            />
-                            <p className={`${erro.campo === "name"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
+        <div className="flex h-screen bg-gray-100">
+            <Sidebar levelAccount={login} selected={7}/>
+            {/* Main Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+                <div className="flex items-center py-6">
+                    <div className="py-2 pl-2">
+                        <div className="flex gap-1 mb-2 justify-start items-center">
+                            <UserCog className="mr-3 text-blue-600" size={35} />
+                            <h1 className="text-2xl font-bold">Nova conta</h1>
                         </div>
-                        
-                        {/* Campo E-mail */}
-                        <div className="mb-6 w-[100%]">
-                            <p>E-mail:</p> 
-                            <input className={`${erro.campo == "email" ? 'border-red-600': 'border-mygray-500'} bg-white border-[2px] rounded-[8px] pl-2 h-[35px] w-[400px]`}
-                            type="text" 
-                            placeholder="E-mail"
-                            onChange={(e) => setAccountItem((prev) => ({...prev, email:e.target.value}))}
-                            />
-                            <p className={`${erro.campo === "email"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
-                        </div>
-
-                        {/* Campo Nivel */}
-                        <div className="mb-6 w-[100%]">
-                            <p>Nível:</p>
-                            <div className="h-[45px] bg-mygray-200 flex items-center *:items-center rounded-[8px] px-2 gap-20">
-                                <label className="flex gap-2">
-                                    <input 
-                                        onChange={handleChange}
-                                        checked={level === "user"}
-                                        type="radio" 
-                                        name="category" 
-                                        value={'user'}/>
-                                    Usuário
-                                </label>
-                                <label className="flex gap-2">
-                                    <input 
-                                        onChange={handleChange}
-                                        checked={level === "admin"}
-                                        type="radio" 
-                                        name="category" 
-                                        value={'admin'}/>
-                                    Administrador
-                                </label>
-                            </div>
-                        </div>
-
-                        {/* Campo senha */}
-                        <div className="mb-4 w-[100%]">
-                            <p>Senha:</p> 
-                            <input className={`${erro.campo == "password" ? 'border-red-600': 'border-mygray-500'} bg-white border-[2px] rounded-[8px] pl-2 h-[35px] w-[400px]`}
-                            type="password" 
-                            placeholder="Senha"
-                            onChange={(e) => setPassword((prev) => ({...prev, password:e.target.value}))}
-                            />
-                            <p className={`${erro.campo === "password"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
-                        </div>
-
-                        {/* Campo confirmar senha */}
-                        <div className="w-[100%]">
-                            <p>Confirmar senha:</p> 
-                            <input className={`${erro.campo == "password" ? 'border-red-600': 'border-mygray-500'} bg-white border-[2px] rounded-[8px] pl-2 h-[35px] w-[400px]`}
-                            type="password" 
-                            placeholder="Confirmar senha"
-                            onChange={(e) => setPassword((prev) => ({...prev, confirmPassword:e.target.value}))}
-                            />
-                            <p className={`${erro.campo === "password"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
-                        </div>
-
+                        <p className="text-gray-500">Preencha o cadastro para criar uma nova conta</p>
                     </div>
-
                 </div>
                 
-                <div className="col-span-6 mb-5 flex justify-end gap-4 *:font-bold *:py-4 *:px-10">
-                    <Link to={'/contas'} className="border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
-                        CANCELAR
-                    </Link>
-                    <button type="button"
-                        onClick={() => setConfirmModal(true)}
-                        disabled={disableButton} 
-                        className="bg-black rounded-[8px] text-white hover:bg-mygray-600">
-                        CADASTRAR
-                    </button>
-                </div>
-            </div>
+                <div className="bg-white rounded-lg shadow-md p-6">
+                    <h2 className="text-xl font-bold mb-4">CRIANDO CONTA</h2>
+                    
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">NOME:</label>
+                        <input 
+                        value={accountItem.name}
+                        onChange={(e) => {
+                            setAccountItem((prev) => ({...prev, name:e.target.value}));
+                        }}
+                        placeholder="Nome"
+                        className={`${erro.campo === "name" ? 'border-red-600': 'border-mygray-500'} border border-gray-500 rounded-md px-3 py-2 w-full`}
+                        />
+                        <p className={`${erro.campo === "name"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
+                    </div>
 
-            {confirmModal && (
-                <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-[8px] w-[25%]">
-                        <div className="flex justify-between h-[10%] mb-10">
-                            <div className="font-bold h-[24px] justify-center text-[18px] pl-8 flex items-center w-[90%]">
-                                CONFIRMAÇÃO
-                            </div>
-                            <button type="button" onClick={() => {
-                                    setConfirmModal(false);
-                                }}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div className="text-center mb-5">
-                            Digite a sua senha para criar a conta
-                            <div className="mt-3">
-                                <input className="mt-2 h-[45px] w-[100%] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" 
-                                    onChange={(e) => setPasswordAccount(e.target.value)}
-                                    type="password" 
-                                    placeholder="Senha"/>
-                            </div>
-                        </div>
-
-
-                        
-                        <div className="h-[5%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
-                            <button onClick={() => setConfirmModal(false)} 
-                                className="w-[300px] border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
-                                CANCELAR
-                            </button>
-                            <button type="button" 
-                                onClick={addNewAccount} 
-                                className="w-[300px] border-[2px] border-black bg-black rounded-[8px] text-white hover:bg-mygray-600">
-                                CRIAR
-                            </button>
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">E-MAIL:</label>
+                        <input 
+                        value={accountItem.email}
+                        onChange={(e) => {
+                            setAccountItem((prev) => ({...prev, email:e.target.value}));
+                        }}
+                        placeholder="E-mail"
+                        className={`${erro.campo == "email" ? 'border-red-600': 'border-mygray-500'} border border-gray-500 rounded-md px-3 py-2 w-full`}
+                        />
+                        <p className={`${erro.campo === "email"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
+                    </div>
+                    
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">NIVEL:</label>
+                        <div className="flex space-x-6">
+                            <label className="flex items-center">
+                                <input type="radio" className="h-4 w-4 text-blue-600" 
+                                    onChange={handleChange}
+                                    checked={level === "user"}
+                                    name="level" 
+                                    value={'user'}/>
+                                <span className="ml-2 text-sm text-gray-700">Usuário</span>
+                            </label>
+                            <label className="flex items-center">
+                                <input type="radio" className="h-4 w-4 text-blue-600" 
+                                    onChange={handleChange}
+                                    checked={level === "admin"}
+                                    name="level" 
+                                    value={'admin'}/>
+                                <span className="ml-2 text-sm text-gray-700">Administrador</span>
+                            </label>
                         </div>
                     </div>
+                
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">SENHA:</label>
+                        <input type="password"
+                            value={password.password}
+                            onChange={(e) => {
+                                setPassword((prev) => ({...prev, password:e.target.value}));
+                            }}
+                            placeholder="Senha"
+                            className="border border-gray-500 rounded-md px-3 py-2 w-full" 
+                        />
+                        <p className={`${erro.campo === "password"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
+                    </div>
+
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">CONFIMAR SENHA:</label>
+                        <input type="password"
+                            value={password.confirmPassword}
+                            onChange={(e) => {
+                                setPassword((prev) => ({...prev, confirmPassword:e.target.value}));
+                            }}
+                            placeholder="Confirmar senha"
+                            className={`${erro.campo == "password" ? 'border-red-600': 'border-mygray-500'} border border-gray-500 rounded-md px-3 py-2 w-full`} 
+                            />
+                        <p className={`${erro.campo === "password"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
+                    </div>
+                
+                    <div className="flex justify-end space-x-4 mt-8">
+                        <Link to={'/contas'} className="border border-gray-300 bg-white text-gray-800 px-6 py-2 rounded-md hover:bg-gray-100">
+                            CANCELAR
+                        </Link>
+
+                        <button type="button"
+                            onClick={() => setConfirmModal(true)}
+                            disabled={disableButton} 
+                            className="bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800">
+                            CADASTRAR
+                        </button>
+                    </div>
                 </div>
-            )}    
+            </div>       
         </div>
+
+        {confirmModal && (
+            <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="bg-white p-6 rounded-[8px] w-[25%]">
+                    <div className="flex justify-between h-[10%] mb-10">
+                        <div className="font-bold h-[24px] justify-center text-[18px] pl-8 flex items-center w-[90%]">
+                            CONFIRMAÇÃO
+                        </div>
+                        <button type="button" onClick={() => {
+                                setConfirmModal(false);
+                            }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="text-center mb-5">
+                        Digite a sua senha para criar a conta
+                        <div className="mt-3">
+                            <input className="mt-6 h-[45px] w-[100%] focus:ring-2 focus:ring-blue-500 outline-none focus:border-blue-500 bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" 
+                                onChange={(e) => setPasswordAccount(e.target.value)}
+                                type="password" 
+                                placeholder="Senha"/>
+                        </div>
+                    </div>
+
+                    <div className="h-[5%] flex justify-end items-center gap-2 *:font-bold *:py-1 *:px-10">
+                        <button onClick={() => setConfirmModal(false)} 
+                            className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
+                            CANCELAR
+                        </button>
+                        <button type="button" 
+                            onClick={addNewAccount} 
+                            className="flex justify-center items-center w-[150px] bg-gray-900 text-white px-10 py-2 rounded-md hover:bg-gray-800">
+                            CRIAR
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}  
         </>
     )
 }

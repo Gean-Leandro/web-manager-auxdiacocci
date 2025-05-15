@@ -198,7 +198,7 @@ export function References() {
         )}
 
         <div className="grid grid-cols-[250px_1fr] h-screen">
-            <Sidebar levelAccount={login}/>
+            <Sidebar levelAccount={login} selected={5}/>
             <div className="px-[15svh] overflow-y-auto">
                 <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
                     REFERÊNCIAS
