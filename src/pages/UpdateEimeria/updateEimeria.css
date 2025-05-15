@@ -1,0 +1,21 @@
+input[type="radio"] {
+    appearance: none; /* Remove o estilo padrão */
+    border-radius: 50%;
+    position: relative; /* Importante para posicionar a bolinha */
+    border: 2px solid black;
+    background-color: white;
+    width: 20px;
+    height: 20px;
+}
+
+input[type="radio"]:checked::before {
+    content: "";
+    width: 14px; /* Tamanho da bolinha interna */
+    height: 14px;
+    background-color: black;
+    border-radius: 50%;
+    position: absolute;
+    top: 48.5%;
+    left: 49.8%;
+    transform: translate(-50%, -50%);
+}
