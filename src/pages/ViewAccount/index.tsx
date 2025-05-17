@@ -102,7 +102,7 @@ export function ViewAccount() {
                         </Link>
 
                         <Link to={'/editando-conta'} 
-                            state={login}
+                            state={account}
                             className="bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800">
                             EDITAR
                         </Link>

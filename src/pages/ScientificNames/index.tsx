@@ -372,18 +372,18 @@ export function ScientificNames() {
 
 
                     
-                    <div className="h-[20%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => {
                                 setConfirmModal(false);
                                 setIdDelet('');
                             }} 
-                            className="w-[300px] border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
+                            className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
                             CANCELAR
                         </button>
                         <button type="button"
                             disabled={disableButton}
                             onClick={deleteScientificName} 
-                            className="w-[300px] border-[2px] border-black bg-black rounded-[8px] text-white hover:bg-mygray-600">
+                            className="flex justify-center items-center w-[150px] bg-gray-900 text-white px-10 py-2 rounded-md hover:bg-gray-800">
                             EXCLUIR
                         </button>
                     </div>

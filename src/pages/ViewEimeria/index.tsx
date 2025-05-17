@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
-import { DynamicListInputDescription } from "../../components/DynamicListDescription";
 import { Notification } from "../../components/Notification";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { AccountService } from "../../services/accountService";
@@ -28,6 +27,9 @@ interface eimeriaProps{
 }
 
 export function ViewEimeria(){
+    const location = useLocation();
+    const navigate = useNavigate();
+    
     useEffect(() => {
         document.title = "Visualizando Eimeria";
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -37,12 +39,18 @@ export function ViewEimeria(){
                 setLogin(query);
             } 
         })
+
+        
         return () => {
+            if (!location.state) {
+                 navigate('/eimerias');
+            }
             unsubscribe();
         };
-    }, []);
 
-    const location = useLocation();
+    }, [location, navigate]);
+
+
     const [eimeria, setEimeria] = useState<eimeriaProps>(location.state);
     const [image, setImage] = useState<string>("");
     const [imageModal, setImageModal] = useState<boolean>(false);
@@ -224,7 +232,7 @@ export function ViewEimeria(){
         {/* Modal Imagem */}
         {imageModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white px-4 pb-1 pt-4 rounded-lg shadow-lg min-w-[30%] min-h-[30%] max-w-[90%] max-h-[90%] overflow-auto relative">
+                <div className="bg-white px-4 pb-1 pt-4 rounded-md shadow-lg min-w-[30%] min-h-[30%] max-w-[90%] max-h-[90%] overflow-auto relative">
                     <div className="flex justify-between h-[10%] w-[100%] mb-3">
                         <div className="font-bold text-[18px] flex justify-center items-center w-[90%] pl-12">
                             IMAGEM
@@ -239,7 +247,7 @@ export function ViewEimeria(){
                         </button>
                     </div>
                     <div className="flex items-center justify-center">
-                        <img src={image} alt="Visualização" className="max-w-full max-h-[70vh] rounded border-[2px] border-mygray-500 mb-4" />
+                        <img src={image} alt="Visualização" className="max-w-full max-h-[70vh] rounded mb-4" />
                     </div>
                 </div>
             </div>
@@ -248,7 +256,7 @@ export function ViewEimeria(){
         {/* Modal Visualizar score*/}
         {scoreModal && (
             <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="bg-white p-6 rounded-[8px] w-[50%] min-h-[20%]">
+                <div className="bg-white p-6 rounded-md w-[50%] min-h-[20%]">
                     <div className="flex justify-between h-[10%] mb-3">
                         <div className="font-bold text-[18px] flex justify-center items-center w-[90%] pl-10">
                             <strong className="text-mygray-600 mr-1">SCORE {">"}</strong>INFORMAÇÕES ADICIONAIS
@@ -264,8 +272,8 @@ export function ViewEimeria(){
                     </div>
                     
                     <div className="h-[90%] w-[100%] flex items-center justify-center">
-                        <div className="bg-mygray-200 p-2 rounded-[8px] border-[2px] border-mygray-500 w-[100%]">
-                            <div className="bg-white rounded-[8px] border-[2px] border-mygray-500 p-1">
+                        <div className="bg-mygray-200 p-2 rounded-[8px] border border-mygray-500 w-[100%]">
+                            <div className="bg-white rounded-[8px] border border-mygray-500 p-1">
                                 <div className="min-h-[50px] max-h-[200px] overflow-y-auto w-[100%]">
                                         { scoreDescription.length === 0 ? (
                                             <p className="text-center text-gray-500 p-2 mt-1">Nenhuma descrição adicionada</p>

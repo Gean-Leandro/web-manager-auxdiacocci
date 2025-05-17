@@ -88,7 +88,6 @@ export function ScoreInput(props:ScoreInputProps) {
     }
 
     const editScoreDescriptionActive = (index:number) => {
-        setEditScoreIndex(index);
         setDescription(props.list[index].description)
         setIsOpen(true);
     }
@@ -281,7 +280,7 @@ export function ScoreInput(props:ScoreInputProps) {
                     value={level}
                     onChange={(e) => setLevel(e.target.value ? Number(e.target.value) : "")} 
                     type="number" 
-                    className={`${alertLevel ? "border-red-600" : "border-mygray-500"} border rounded-md px-3 py-2 w-[100%]`} 
+                    className={`${alertLevel ? "border-red-600" : "border-gray-500"} border rounded-md px-3 py-2 w-[100%]`} 
                     placeholder="NÍVEL" 
                     />
                 <p className={`text-red-600 mt-1 w-[100%] text-center ${alertLevel ? "" : "hidden"}`}>Adicione um nível válido</p>
@@ -384,7 +383,7 @@ export function ScoreInput(props:ScoreInputProps) {
                                         {/* Botão de edição */}
                                         <button onClick={() => editScore(index, score.level)}
                                             type="button" 
-                                            className={`text-gray-600 hover:text-blue-600 rounded-[8px] ${index === editDescriptionIndex ? "hidden": ""}`}>
+                                            className={`text-gray-600 hover:text-blue-600 rounded-[8px] ${index === editScoreIndex ? "hidden": ""}`}>
                                             <Edit2 size={20} />
                                         </button>
                                         
@@ -411,7 +410,7 @@ export function ScoreInput(props:ScoreInputProps) {
         {/* Modal */}
         {isOpen && (
             <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="bg-white p-6 rounded-[8px] w-[50%] h-[50%]">
+                <div className="bg-white p-6 rounded-[8px] w-[50%] max-h-[50%]">
                     <div className="flex justify-between h-[10%] mb-3">
                         <div className="font-bold text-[18px] flex justify-center pl-16 items-center w-[90%]">
                             <strong className="text-mygray-600 mr-1">SCORE {">"}</strong>INFORMAÇÕES ADICIONAIS
@@ -423,7 +422,7 @@ export function ScoreInput(props:ScoreInputProps) {
                         </button>
                     </div>
                     
-                    <div className="bg-mygray-300 p-2 h-[70%] rounded-[8px] border-[1px] border-mygray-500">
+                    <div className="bg-mygray-300 p-2  rounded-[8px] border-[1px] border-mygray-500">
                         <div className={`relative ${editDescriptionIndex !== null ? "hidden": ""} border border-gray-400 rounded-md bg-gray-50`}>
                             <input 
                                 type="text" 
@@ -496,7 +495,7 @@ export function ScoreInput(props:ScoreInputProps) {
                             </div>
                         </div>
                     </div>
-                    <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[20%] mt-4 flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={cancelDescriptionbutton} className="border border-gray-300 bg-white text-gray-800 px-6 py-2 rounded-md hover:bg-gray-100">
                             CANCELAR
                         </button>

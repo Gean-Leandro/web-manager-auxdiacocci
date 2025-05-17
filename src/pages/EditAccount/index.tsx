@@ -113,7 +113,7 @@ export function EditAccount() {
                 </div>
                 
                 <div className="bg-white rounded-lg shadow-md p-6">
-                    <h2 className="text-xl font-bold mb-4">CRIANDO CONTA</h2>
+                    <h2 className="text-xl font-bold mb-4">CONTA</h2>
                     
                     <div className="mb-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">NOME:</label>
@@ -192,7 +192,7 @@ export function EditAccount() {
                             onClick={() => {setConfirmModal(true)}}
                             disabled={disableButton} 
                             className="bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800">
-                            CADASTRAR
+                            ATUALIZAR
                         </button>
                     </div>
                 </div>
@@ -235,14 +235,14 @@ export function EditAccount() {
 
 
                     
-                    <div className="h-[5%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[5%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => setConfirmModal(false)} 
-                            className="w-[200px] border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
+                            className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
                             CANCELAR
                         </button>
                         <button type="button" 
                             onClick={updateAccount} 
-                            className="w-[200px] border-[2px] border-black bg-black rounded-[8px] text-white hover:bg-mygray-600">
+                            className="flex justify-center items-center w-[150px] bg-gray-900 text-white px-10 py-2 rounded-md hover:bg-gray-800">
                             ATUALIZAR
                         </button>
                     </div>

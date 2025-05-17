@@ -133,7 +133,7 @@ export function NewAccount() {
                             setAccountItem((prev) => ({...prev, name:e.target.value}));
                         }}
                         placeholder="Nome"
-                        className={`${erro.campo === "name" ? 'border-red-600': 'border-mygray-500'} border border-gray-500 rounded-md px-3 py-2 w-full`}
+                        className={`${erro.campo === "name" ? 'border-red-600': 'border-gray-500'} border rounded-md px-3 py-2 w-full`}
                         />
                         <p className={`${erro.campo === "name"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
                     </div>
@@ -146,7 +146,7 @@ export function NewAccount() {
                             setAccountItem((prev) => ({...prev, email:e.target.value}));
                         }}
                         placeholder="E-mail"
-                        className={`${erro.campo == "email" ? 'border-red-600': 'border-mygray-500'} border border-gray-500 rounded-md px-3 py-2 w-full`}
+                        className={`${erro.campo == "email" ? 'border-red-600': 'border-gray-500'} border rounded-md px-3 py-2 w-full`}
                         />
                         <p className={`${erro.campo === "email"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
                     </div>
@@ -181,7 +181,7 @@ export function NewAccount() {
                                 setPassword((prev) => ({...prev, password:e.target.value}));
                             }}
                             placeholder="Senha"
-                            className="border border-gray-500 rounded-md px-3 py-2 w-full" 
+                            className={`${erro.campo == "password" ? 'border-red-600': 'border-gray-500'} border rounded-md px-3 py-2 w-full`} 
                         />
                         <p className={`${erro.campo === "password"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
                     </div>
@@ -194,7 +194,7 @@ export function NewAccount() {
                                 setPassword((prev) => ({...prev, confirmPassword:e.target.value}));
                             }}
                             placeholder="Confirmar senha"
-                            className={`${erro.campo == "password" ? 'border-red-600': 'border-mygray-500'} border border-gray-500 rounded-md px-3 py-2 w-full`} 
+                            className={`${erro.campo == "password" ? 'border-red-600': 'border-gray-500'} border rounded-md px-3 py-2 w-full`} 
                             />
                         <p className={`${erro.campo === "password"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
                     </div>

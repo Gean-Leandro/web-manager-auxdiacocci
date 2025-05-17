@@ -181,7 +181,7 @@ export function Eimerias(){
 
         {confirmModal && (
             <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="bg-white p-6 rounded-[8px] w-[25%]">
+                <div className="bg-white p-6 rounded-md w-[25%]">
                     <div className="flex justify-between h-[10%] mb-3">
                         <div className="font-bold h-[24px] justify-center text-[18px] pl-8 flex items-center w-[90%]">
                             CONFIRMAÇÃO
@@ -216,14 +216,14 @@ export function Eimerias(){
 
 
                     
-                    <div className="h-[20%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => setConfirmModal(false)} 
-                            className="w-[300px] border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
+                            className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
                             CANCELAR
                         </button>
                         <button type="button" 
                             onClick={deleteEspecie} 
-                            className="w-[300px] border-[2px] border-black bg-black rounded-[8px] text-white hover:bg-mygray-600">
+                            className="flex justify-center items-center w-[150px] bg-gray-900 text-white px-10 py-2 rounded-md hover:bg-gray-800">
                             EXCLUIR
                         </button>
                     </div>

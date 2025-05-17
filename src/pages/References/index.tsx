@@ -5,6 +5,7 @@ import { ReferencesService, IReference } from "../../services/referencesService"
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { AccountService } from "../../services/accountService";
+import { Check, Edit2, Eye, FileText, Microscope, Plus, Trash2, X } from "lucide-react";
 
 export function References() {
     const [references, setReferences] = useState<IReference[]>([]);
@@ -22,6 +23,57 @@ export function References() {
     const [editReference, setEditReference] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [login, setLogin] = useState<string>("");
+
+    const [tipoReferencia, setTipoReferencia] = useState('');
+    
+    // Campos comuns para todos os tipos de referência
+    const [titulo, setTitulo] = useState('');
+    const [autor, setAutor] = useState('');
+    const [ano, setAno] = useState('');
+    
+    // Campos específicos
+    const [revista, setRevista] = useState('');
+    const [volume, setVolume] = useState('');
+    const [numero, setNumero] = useState('');
+    const [paginas, setPaginas] = useState('');
+    const [editora, setEditora] = useState('');
+    const [edicao, setEdicao] = useState('');
+    const [url, setUrl] = useState('');
+    const [dataAcesso, setDataAcesso] = useState('');
+    const [formato, setFormato] = useState('');
+    const [tamanho, setTamanho] = useState('');
+    
+    const handleSubmit = (e:any) => {
+        e.preventDefault();
+        // Lógica para salvar a referência
+        console.log("Referência cadastrada:", { 
+        tipo: tipoReferencia, 
+        titulo, 
+        autor, 
+        ano,
+        // Outros campos conforme o tipo
+        });
+        
+        // Resetar formulário após envio
+        resetForm();
+    };
+    
+    const resetForm = () => {
+        setTipoReferencia('');
+        setTitulo('');
+        setAutor('');
+        setAno('');
+        setRevista('');
+        setVolume('');
+        setNumero('');
+        setPaginas('');
+        setEditora('');
+        setEdicao('');
+        setUrl('');
+        setDataAcesso('');
+        setFormato('');
+        setTamanho('');
+    };
     
 
     useEffect(() => {
@@ -63,7 +115,7 @@ export function References() {
         }
     };
 
-    const updateGlossaryList = async () => {
+    const updateReferenceList = async () => {
         const query = await ReferencesService.getReferences();
 
         if (query.status === "OK") {
@@ -90,7 +142,7 @@ export function References() {
                     await ReferencesService.addNew(referenceItem);
                     setReferenceItem({id:"", title:"", reference: ""});
     
-                    updateGlossaryList();
+                    updateReferenceList();
     
                     setShowNotification({
                         active: true, 
@@ -121,7 +173,7 @@ export function References() {
         
     }
 
-    const updateGlossary = async () => {
+    const updateReference = async () => {
         setDisableButton(true);
 
         try {
@@ -135,7 +187,7 @@ export function References() {
                     setReferenceItem({id:'', title:'', reference:''});
                     setEditReference(false);
                     
-                    updateGlossaryList();
+                    updateReferenceList();
                     
                     setShowNotification({
                         active: true, 
@@ -169,7 +221,7 @@ export function References() {
     const deleteReference = async () => {
         try {
             await ReferencesService.delete(idDelet);
-            updateGlossaryList();
+            updateReferenceList();
             setShowNotification({
                 active: true, 
                 mensage: "Referência excluida", 
@@ -196,6 +248,428 @@ export function References() {
             onClose={() => setShowNotification({active: false, mensage:"", bgColor:""})}
             />
         )}
+
+<div className="flex h-screen bg-gray-100">
+            <Sidebar levelAccount={login} selected={3}/>
+            <div className="flex-grow overflow-auto">
+                {/* Header */}
+                <div className="flex items-center p-6">
+                    <div className="p-2">
+                        <div className="flex gap-1 mb-2 justify-start items-center">
+                            <FileText className="mr-3 text-blue-600" size={35} />
+                            <h1 className="text-2xl font-bold">Referências</h1>
+                        </div>
+                        <p className="text-gray-500">Gerencie as referências cadastradas.</p>
+                    </div>
+                </div>
+
+
+                {openView && (
+                <div className="p-6">
+                    <div className="bg-white rounded-lg border shadow-lg overflow-hidden p-4">
+                        <div className="flex border-b pb-2 justify-between h-[10%] mb-3">
+                            <div className="font-bold h-[24px] justify-center text-[18px] pl-12 flex items-center w-[90%]">
+                                <h2 className="text-lg font-semibold">VISUALIZAÇÃO</h2>
+                            </div>
+                            <button type="button" onClick={() => {
+                                    setOpenView(false);
+                                }}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Palavra:</label>
+                            <input className={`pl-4 pr-24 py-2 border border-gray-500 rounded w-full mb-4`}
+                                type="text" 
+                                disabled={true}
+                                // value={viewGlossaryItem.word}
+                                placeholder="Palavra"/>
+
+                            <label className="block text-sm font-medium mb-2">Significado:</label>
+                            <textarea className={`pl-4 pr-24 py-2 border border-gray-500 rounded w-full`} 
+                                disabled={true}
+                                // value={viewGlossaryItem.meaning}
+                                placeholder="Palavra"/>
+                        </div>
+                    </div>
+                </div>
+                )}
+
+                {/* Content */}
+                <div className="p-6">
+                    <div className="bg-white rounded-lg border shadow-lg overflow-hidden">
+
+                        {/* Campo editar */}
+                        <div className={`${fieldBusca && 'hidden'} p-4 border-b`}>
+                            <div className="pb-4 mb-4 border-b bg-white">
+                                <h2 className="text-lg font-semibold">{!editReference ? "Preencha o formulário": "Editando"}</h2>
+                            </div>
+
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-6">
+                                <label className="block text-gray-700 font-medium mb-2">TIPO DE REFERÊNCIA:</label>
+                                <select 
+                                    className="w-full px-4 py-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    value={tipoReferencia}
+                                    onChange={(e) => setTipoReferencia(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="artigo">Artigo Científico</option>
+                                    <option value="livro">Livro</option>
+                                    <option value="pdf">PDF</option>
+                                    <option value="site">Site/Página Web</option>
+                                </select>
+                                </div>
+                                
+                                {tipoReferencia === "artigo" && (
+                                    <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO DO ARTIGO:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO DO PERIÓDICO:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Cidade" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">MÊS:</label>
+                                        <select className="w-full border border-gray-300 rounded p-2">
+                                            <option value="">Selecione o mês</option>
+                                            <option value="jan.">jan.</option>
+                                            <option value="fev.">fev.</option>
+                                            <option value="mar.">mar.</option>
+                                            <option value="abr.">abr.</option>
+                                            <option value="maio">maio</option>
+                                            <option value="jun.">jun.</option>
+                                            <option value="jul.">jul.</option>
+                                            <option value="ago.">ago.</option>
+                                            <option value="set.">set.</option>
+                                            <option value="out.">out.</option>
+                                            <option value="nov.">nov.</option>
+                                            <option value="dez.">dez.</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">VOLUME:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">NÚMERO:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">ANO:</label>
+                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">PÁGINAS:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: 45-60" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">DOI:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        </div>
+                                    </div>
+                                    </div>
+                                )}
+                                
+                                {tipoReferencia === "livro" && (
+                                    <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">EDIÇÃO:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: 2. ed." />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Cidade" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">EDITORA:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">ANO:</label>
+                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">MÊS:</label>
+                                        <select className="w-full border border-gray-300 rounded p-2">
+                                            <option value="">Selecione o mês</option>
+                                            <option value="jan.">jan.</option>
+                                            <option value="fev.">fev.</option>
+                                            <option value="mar.">mar.</option>
+                                            <option value="abr.">abr.</option>
+                                            <option value="maio">maio</option>
+                                            <option value="jun.">jun.</option>
+                                            <option value="jul.">jul.</option>
+                                            <option value="ago.">ago.</option>
+                                            <option value="set.">set.</option>
+                                            <option value="out.">out.</option>
+                                            <option value="nov.">nov.</option>
+                                            <option value="dez.">dez.</option>
+                                        </select>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">TOTAL DE PÁGINAS:</label>
+                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">ISBN:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    </div>
+                                )}
+                                
+                                {tipoReferencia === "pdf" && (
+                                    <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" />
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Cidade" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">ANO:</label>
+                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">MÊS:</label>
+                                        <select className="w-full border border-gray-300 rounded p-2">
+                                            <option value="">Selecione o mês</option>
+                                            <option value="jan.">jan.</option>
+                                            <option value="fev.">fev.</option>
+                                            <option value="mar.">mar.</option>
+                                            <option value="abr.">abr.</option>
+                                            <option value="maio">maio</option>
+                                            <option value="jun.">jun.</option>
+                                            <option value="jul.">jul.</option>
+                                            <option value="ago.">ago.</option>
+                                            <option value="set.">set.</option>
+                                            <option value="out.">out.</option>
+                                            <option value="nov.">nov.</option>
+                                            <option value="dez.">dez.</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">INSTITUIÇÃO/ORGANIZAÇÃO:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">NÚMERO DE PÁGINAS:</label>
+                                        <input type="number" className="w-full border border-gray-300 rounded p-2" placeholder="Total de páginas" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">URL DO DOCUMENTO:</label>
+                                        <input type="url" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">DATA DE ACESSO:</label>
+                                        <input type="date" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    </div>
+                                )}
+                                
+                                {tipoReferencia === "site" && (
+                                    <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO DA PÁGINA:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">AUTOR/RESPONSÁVEL:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO DO SITE:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
+                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Cidade (se disponível)" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">ANO DE PUBLICAÇÃO:</label>
+                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">MÊS (SE HOUVER):</label>
+                                        <select className="w-full border border-gray-300 rounded p-2">
+                                            <option value="">Selecione o mês</option>
+                                            <option value="jan.">jan.</option>
+                                            <option value="fev.">fev.</option>
+                                            <option value="mar.">mar.</option>
+                                            <option value="abr.">abr.</option>
+                                            <option value="maio">maio</option>
+                                            <option value="jun.">jun.</option>
+                                            <option value="jul.">jul.</option>
+                                            <option value="ago.">ago.</option>
+                                            <option value="set.">set.</option>
+                                            <option value="out.">out.</option>
+                                            <option value="nov.">nov.</option>
+                                            <option value="dez.">dez.</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">URL:</label>
+                                        <input type="url" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">DATA DE ACESSO:</label>
+                                        <input type="date" className="w-full border border-gray-300 rounded p-2" />
+                                    </div>
+                                    </div>
+                                )}
+                                    
+                                    <div className="flex justify-end mt-8">
+                                    <button 
+                                        type="button" 
+                                        className="px-6 py-2 mr-4 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none"
+                                        onClick={resetForm}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button 
+                                        type="submit" 
+                                        className="px-6 py-2 rounded-md bg-blue-900 text-white hover:bg-blue-800 focus:outline-none"
+                                    >
+                                        Salvar Referência
+                                    </button>
+                                    </div>
+                            </form>
+                        </div>
+
+                        <div className="p-4 border-b bg-white">
+                            <h2 className="text-lg font-semibold">Lista de referências</h2>
+                        </div>
+                        
+                        {/* Search and Add */}
+                        <div className="p-4 bg-gray-100">
+                            <div className="flex items-center">
+                                <div className="relative flex-grow">
+                                <input
+                                    type="text"
+                                    placeholder="Palavra"
+                                    className="w-full pl-4 pr-24 py-2 border border-gray-500 rounded"
+                                    value={busca}
+                                    onChange={(e) => setBusca(e.target.value)}
+                                />
+                                <button type="button" 
+                                    onClick={handleBuscar} 
+                                    className="absolute right-0 top-0 h-full px-3 hover:bg-blue-800 bg-blue-600 text-white rounded-r">
+                                    BUSCAR
+                                </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Species List - Simple Version like second image */}
+                        <div className="max-h-80 overflow-y-auto">
+                        {filtradas.length !== 0 ? filtradas.map((reference) => (
+                            <div 
+                            key={reference.id} 
+                            className="flex items-center justify-between p-3 border-b hover:bg-gray-50"
+                            >
+                            <div className="font-medium">{reference.title}</div>
+                            
+                            <div className="flex space-x-2">
+                                <button type="button" onClick={() => {
+                                        setReferenceItem(reference);
+                                        setFieldBusca(false);
+                                        setEditReference(true);
+                                    }} className={`${login !== "admin"? "hidden" : ""} ${editReference && referenceItem.id === reference.id ? "hidden": ""}  p-1 text-gray-600 hover:text-blue-600`}>
+                                    <Edit2 size={18} />
+                                </button>
+
+                                <button type="button" 
+                                    onClick={() => {
+                                        setViewReferenceItem(reference);
+                                        setOpenView(true);
+                                    }}
+                                    className="p-1 text-gray-600 hover:text-blue-600">
+                                    <Eye size={18} />
+                                </button>
+                                
+                                <button type="button"
+                                        onClick={() => {
+                                            setConfirmModal(true);
+                                            setIdDelet(reference.id);
+                                        }} 
+                                        className={`${login !== "admin"? "hidden" : ""} p-1 text-red-500 hover:text-red-700`}>
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
+                            </div>
+                        ))
+                        :   <div className="h-[100%] w-[100%] py-10 flex justify-center items-center text-mygray-700">
+                                Nenhuma referência cadastrada
+                            </div>
+                        }
+                        </div>
+                        
+                        {/* Cadastrar Button */}
+                        <div className="p-4 border-t flex justify-end gap-2 items-center">
+                            <button type="button"
+                                onClick={() => {
+                                    setFieldBusca(true)
+                                    setEditReference(false);
+                                }}
+                                className={`${fieldBusca && "hidden"} flex items-center px-4 py-2 border-slate-500 border-[2px] rounded bg-white hover:bg-gray-100`}>
+                                CANCELAR
+                            </button>
+                            <button type="button"
+                                onClick={() => setFieldBusca(false)} className={`${!fieldBusca && "hidden"} flex items-center px-4 py-2 border-[2px] border-black bg-black rounded text-white hover:bg-mygray-600`}>
+                                <Plus size={18} className="mr-1" />
+                                <span>CADASTRAR</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+        </div>
+
+
+
+
+
 
         <div className="grid grid-cols-[250px_1fr] h-screen">
             <Sidebar levelAccount={login} selected={5}/>
@@ -278,7 +752,7 @@ export function References() {
                                 {/* Salvar Button */}
                                 <button
                                     disabled={disableButton}
-                                    onClick={updateGlossary}
+                                    onClick={updateReference}
                                     type="button" 
                                     className={`${!editReference && "hidden"} bg-green-600 flex items-center justify-center text-white font-bold h-[35px] w-[22%] rounded-[8px] hover:bg-green-500`}>
                                     SALVAR

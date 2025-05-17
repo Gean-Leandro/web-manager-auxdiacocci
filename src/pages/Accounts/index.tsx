@@ -115,9 +115,11 @@ export function Accounts() {
                                 key={user.uid} 
                                 className="flex items-center justify-between p-3 border-b hover:bg-gray-50"
                                 >
-                                <div className="font-medium">{user.name}</div>
+                                <div className="font-medium w-[33%]">{user.name}</div>
                                 
-                                <div className="flex space-x-2">
+                                <div className="font-medium text-gray-500 w-[33%] pl-28">{user.email}</div>
+
+                                <div className="flex space-x-2 w-[33%] justify-end">
                                     <Link to={'/editando-conta'} state={user} className={`${login !== "admin"? "hidden" : ""} p-1 text-gray-600 hover:text-blue-600`}>
                                         <Edit2 size={18} />
                                     </Link>
