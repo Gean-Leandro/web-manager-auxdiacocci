@@ -9,6 +9,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { AccountService } from "../../services/accountService";
 import { auth } from "../../../firebaseConfig";
 import { Egg } from "lucide-react";
+import { ScreamLoading } from "../../components/ScreamLoading";
 
 interface Iscore {
     level: number | string,
@@ -68,6 +69,7 @@ export function UpdateEimeria(){
     );
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [login, setLogin] = useState<string>('');
+    const [load, setLoad] = useState<boolean>(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -94,6 +96,7 @@ export function UpdateEimeria(){
     };
 
     const updateOldEimeria = async () => {
+        setLoad(true);
         try {
             await EimeriaService.update(eimeria, category);
             navigate('/eimerias')
@@ -110,6 +113,7 @@ export function UpdateEimeria(){
                 bgColor: "bg-orange-500",
             });  
         }
+        setLoad(false);
     } 
 
     return(
@@ -123,6 +127,8 @@ export function UpdateEimeria(){
         )}
 
 <div className="flex h-screen bg-gray-100">
+            {load && <ScreamLoading/>}
+            
             <Sidebar levelAccount={login} selected={2}/>
             {/* Main Content */}
             <div className="flex-1 overflow-y-auto p-6">

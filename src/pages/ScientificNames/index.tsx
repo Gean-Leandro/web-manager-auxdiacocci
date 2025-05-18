@@ -125,7 +125,7 @@ export function ScientificNames() {
 
         try {
             const scientificNameIdentic = scientificNames.some(
-                (item) => item.name.trim().toLowerCase() === scientificNameItem.name.trim().toLowerCase() 
+                (item) => item.name.trim() === scientificNameItem.name.trim() 
             )
 
             if (scientificNameItem.name !== "") {
@@ -226,7 +226,7 @@ export function ScientificNames() {
                                 type="text" 
                                 value={scientificNameItem.name}
                                 placeholder="Palavra"
-                                onChange={(e) => setScientificNameItem((prev) => ({...prev, word:e.target.value}))}/>
+                                onChange={(e) => setScientificNameItem((prev) => ({...prev, name:e.target.value}))}/>
 
                                 {/* Adicionar Button */}
                                 <button

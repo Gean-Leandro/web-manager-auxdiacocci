@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from '../../../firebaseConfig';
 import { BookOpen, Egg, FileText, LayoutDashboard, LogOut, Microscope, User, UserCog } from "lucide-react";
-import logo from '../../assets/Logo.png';
 
 interface ISidebar {
     levelAccount: string,
@@ -23,7 +22,7 @@ export function Sidebar(props:ISidebar){
     return(
         <div className="bg-[#103356] w-52 flex flex-col">
             {/* Logo */}
-            <div className="p-4 mb-6 h-[144px] flex justify-center items-center bg-[#FBFBFB] rounded-bl-[20px]">
+            <div className="p-4 mb-6 h-[144px] flex justify-center items-center bg-gray-100 rounded-bl-[20px]">
                 <svg width="89" height="137" viewBox="0 0 359 427" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M341.182 260.978C331.891 273.416 268.355 316.238 272.603 315.172C277.912 313.839 325.254 277.858 326.581 280.524C327.909 283.189 303.132 300.957 305.344 300.957" stroke="black" stroke-linecap="round"/>
                 <path d="M345.521 42.8036C343.613 46.2136 335.885 51.0852 337.412 51.0852C339.32 51.0852 348.86 45.7265 349.338 46.7008C349.815 47.6751 343.136 50.598 344.09 51.0852C345.044 51.5723 349.815 48.1623 350.292 49.1366C350.769 50.1109 347.429 51.0852 347.906 51.5723C348.383 52.0595 352.2 50.1109 351.723 52.0595" stroke="black" stroke-linecap="round"/>
@@ -79,7 +78,7 @@ export function Sidebar(props:ISidebar){
                 <li>
                 <Link to={'/perfil'} className={`${props.selected === 6 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3 hover:bg-blue-800 hover:text-white`}>
                     <User className="mr-3" size={20} />
-                    <span>Perfil</span>
+                    <span>Meu perfil</span>
                 </Link>
                 </li>
                 <li>

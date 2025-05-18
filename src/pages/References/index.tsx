@@ -5,7 +5,7 @@ import { ReferencesService, IReference } from "../../services/referencesService"
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { AccountService } from "../../services/accountService";
-import { Check, Edit2, Eye, FileText, Microscope, Plus, Trash2, X } from "lucide-react";
+import { Check, Edit2, Eye, FileText, Plus, Trash2, X } from "lucide-react";
 
 export function References() {
     const [references, setReferences] = useState<IReference[]>([]);
@@ -17,62 +17,26 @@ export function References() {
     const [fieldBusca, setFieldBusca] = useState<boolean>(true);
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [openView, setOpenView] = useState<boolean>(false);
-    const [viewReferenceItem, setViewReferenceItem] = useState<IReference>({id: '', title: '', reference: ''});
-    const [referenceItem, setReferenceItem] = useState<IReference>({id: '', title: '', reference: ''});
+    const [viewReferenceItem, setViewReferenceItem] = useState<IReference>({
+        id:'',
+        title: '',
+        tipoReferencia: '',
+        ano: ''
+    });
+    const [referenceItem, setReferenceItem] = useState<IReference>({
+        id:'',
+        title: '',
+        tipoReferencia: '',
+        ano: ''
+    });
     const [idDelet, setIdDelet] = useState<string>('');
     const [editReference, setEditReference] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [login, setLogin] = useState<string>("");
 
-    const [tipoReferencia, setTipoReferencia] = useState('');
-    
-    // Campos comuns para todos os tipos de referência
-    const [titulo, setTitulo] = useState('');
-    const [autor, setAutor] = useState('');
-    const [ano, setAno] = useState('');
-    
-    // Campos específicos
-    const [revista, setRevista] = useState('');
-    const [volume, setVolume] = useState('');
-    const [numero, setNumero] = useState('');
-    const [paginas, setPaginas] = useState('');
-    const [editora, setEditora] = useState('');
-    const [edicao, setEdicao] = useState('');
-    const [url, setUrl] = useState('');
-    const [dataAcesso, setDataAcesso] = useState('');
-    const [formato, setFormato] = useState('');
-    const [tamanho, setTamanho] = useState('');
-    
-    const handleSubmit = (e:any) => {
-        e.preventDefault();
-        // Lógica para salvar a referência
-        console.log("Referência cadastrada:", { 
-        tipo: tipoReferencia, 
-        titulo, 
-        autor, 
-        ano,
-        // Outros campos conforme o tipo
-        });
-        
-        // Resetar formulário após envio
-        resetForm();
-    };
     
     const resetForm = () => {
-        setTipoReferencia('');
-        setTitulo('');
-        setAutor('');
-        setAno('');
-        setRevista('');
-        setVolume('');
-        setNumero('');
-        setPaginas('');
-        setEditora('');
-        setEdicao('');
-        setUrl('');
-        setDataAcesso('');
-        setFormato('');
-        setTamanho('');
+        setReferenceItem({id: '', title: '', ano: '', tipoReferencia: ''})
     };
     
 
@@ -115,6 +79,75 @@ export function References() {
         }
     };
 
+    const validateFields = () => {
+        switch (referenceItem.tipoReferencia) {
+            case "artigo":
+                if (referenceItem.title !== '' && referenceItem.autor 
+                    && referenceItem.ano !== '' && referenceItem.local 
+                    && referenceItem.mes && referenceItem.volume 
+                    && referenceItem.numero) {
+
+                    if (referenceItem.autor !== '' && referenceItem.local !== '' 
+                        && referenceItem.mes !== '' && referenceItem.volume !== '' 
+                        && referenceItem.numero !== '') {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            case "livro":
+                if (referenceItem.title !== '' && referenceItem.autor
+                    && referenceItem.ano !== '' && referenceItem.mes 
+                    && referenceItem.edicao && referenceItem.editora 
+                    && referenceItem.local && referenceItem.paginas) {
+
+                    if (referenceItem.autor !== '' && referenceItem.local !== '' 
+                        && referenceItem.mes !== '' && referenceItem.edicao !== '' 
+                        && referenceItem.editora !== ''  && referenceItem.paginas !== '') {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            case "pdf":
+                if (referenceItem.title !== '' && referenceItem.autor  
+                    && referenceItem.local  && referenceItem.mes  
+                    && referenceItem.volume  && referenceItem.numero  
+                    && referenceItem.ano !== '' 
+                    && referenceItem.url) {
+
+                    if (referenceItem.autor !== '' && referenceItem.local !== '' 
+                        && referenceItem.mes !== '' && referenceItem.volume !== '' 
+                        && referenceItem.numero !== '' && referenceItem.url) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                    
+                } else {
+                    return false;
+                }
+            case "site":
+                if (referenceItem.title !== '' && referenceItem.autor 
+                    && referenceItem.mes && referenceItem.url 
+                    && referenceItem.ano !== '' && referenceItem.tituloSite) {
+
+                    if (referenceItem.autor !== '' && referenceItem.mes !== '' 
+                        && referenceItem.tituloSite !== '' && referenceItem.url) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+        }
+    }
+
     const updateReferenceList = async () => {
         const query = await ReferencesService.getReferences();
 
@@ -131,7 +164,7 @@ export function References() {
     }
 
     const addNewReference = async () => {
-        if (!(referenceItem.title === "") && !(referenceItem.reference === "")) {
+        if (validateFields()) {
 
             const titleExist = references.some(
                 (item) => item.title.trim().toLowerCase() === referenceItem.title.trim().toLowerCase()
@@ -140,7 +173,7 @@ export function References() {
             if (!titleExist) {
                 try {
                     await ReferencesService.addNew(referenceItem);
-                    setReferenceItem({id:"", title:"", reference: ""});
+                    resetForm();
     
                     updateReferenceList();
     
@@ -176,42 +209,33 @@ export function References() {
     const updateReference = async () => {
         setDisableButton(true);
 
-        try {
-            const referenceIdentic = references.some(
-                (item) => item.title.trim().toLowerCase() === referenceItem.title.trim().toLowerCase() && item.reference.trim().toLowerCase() === referenceItem.reference.trim().toLowerCase() 
-            )
+        if (validateFields()) {
+            try {
 
-            if (referenceItem.reference !== "" && referenceItem.title !== "") {
-                if (!referenceIdentic){   
-                    await ReferencesService.update(referenceItem);
-                    setReferenceItem({id:'', title:'', reference:''});
-                    setEditReference(false);
-                    
-                    updateReferenceList();
-                    
-                    setShowNotification({
-                        active: true, 
-                        mensage: "Referência atualizada", 
-                        bgColor: "bg-green-600"
-                    })
-                } else {
-                    setShowNotification({
-                        active: true, 
-                        mensage: "Não exite alterações para serem atualizadas", 
-                        bgColor: "bg-orange-500"
-                    })
-                }
-            } else {
+                await ReferencesService.update(referenceItem);
+                setReferenceItem({id:'', title:'', ano:'', tipoReferencia: ''});
+                setEditReference(false);
+                
+                updateReferenceList();
+                setFieldBusca(true);
+                
                 setShowNotification({
                     active: true, 
-                    mensage: "Preencha todos os campos", 
+                    mensage: "Referência atualizada", 
+                    bgColor: "bg-green-600"
+                })
+            } catch (error) {
+
+                setShowNotification({
+                    active: true, 
+                    mensage: "Error: " + error, 
                     bgColor: "bg-orange-500"
                 })
             }
-        } catch (error) {
+        } else {
             setShowNotification({
                 active: true, 
-                mensage: "Error:" + error, 
+                mensage: "Preencha todos os campos", 
                 bgColor: "bg-orange-500"
             })
         }
@@ -281,18 +305,299 @@ export function References() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-2">Palavra:</label>
-                            <input className={`pl-4 pr-24 py-2 border border-gray-500 rounded w-full mb-4`}
-                                type="text" 
-                                disabled={true}
-                                // value={viewGlossaryItem.word}
-                                placeholder="Palavra"/>
-
-                            <label className="block text-sm font-medium mb-2">Significado:</label>
-                            <textarea className={`pl-4 pr-24 py-2 border border-gray-500 rounded w-full`} 
-                                disabled={true}
-                                // value={viewGlossaryItem.meaning}
-                                placeholder="Palavra"/>
+                        <form>
+                                <div className="mb-6">
+                                <label className="block text-gray-700 font-medium mb-2">TIPO DE REFERÊNCIA:</label>
+                                <select 
+                                    className="w-full px-4 py-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    value={viewReferenceItem.tipoReferencia}
+                                    required
+                                    disabled={true}
+                                >
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="artigo">Artigo Científico</option>
+                                    <option value="livro">Livro</option>
+                                    <option value="pdf">PDF</option>
+                                    <option value="site">Site/Página Web</option>
+                                </select>
+                                </div>
+                                
+                                {viewReferenceItem.tipoReferencia === "artigo" && (
+                                    <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO DO ARTIGO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.title}
+                                                disabled={true}/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" 
+                                                value={viewReferenceItem.autor}
+                                                disabled={true}/>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                                value={viewReferenceItem.local}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">MÊS:</label>
+                                        <select className="w-full border border-gray-500 rounded p-2"
+                                            value={viewReferenceItem.mes}
+                                            disabled={true}>
+                                            <option value="">Selecione o mês</option>
+                                            <option value="jan">jan</option>
+                                            <option value="fev">fev</option>
+                                            <option value="mar">mar</option>
+                                            <option value="abr">abr</option>
+                                            <option value="mai">mai</option>
+                                            <option value="jun">jun</option>
+                                            <option value="jul">jul</option>
+                                            <option value="ago">ago</option>
+                                            <option value="set">set</option>
+                                            <option value="out">out</option>
+                                            <option value="nov">nov</option>
+                                            <option value="dez">dez</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">VOLUME:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.volume}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">NÚMERO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.numero}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">ANO:</label>
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.ano}
+                                                disabled={true}/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">DOI:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.doi}
+                                                disabled={true}/>
+                                    </div>
+                                    </div>
+                                )}
+                                
+                                {viewReferenceItem.tipoReferencia === "livro" && (
+                                    <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.title}
+                                                disabled={true}/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" 
+                                                value={viewReferenceItem.autor}
+                                                disabled={true}/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">EDIÇÃO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: 2. ed." 
+                                                value={viewReferenceItem.edicao}
+                                                disabled={true}/>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                                value={viewReferenceItem.local}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">EDITORA:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.editora}
+                                                disabled={true}/>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">ANO:</label>
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.ano}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">MÊS:</label>
+                                        <select className="w-full border border-gray-500 rounded p-2"
+                                                value={viewReferenceItem.mes}
+                                                disabled={true}>
+                                            <option value="">Selecione o mês</option>
+                                            <option value="jan">jan</option>
+                                            <option value="fev">fev</option>
+                                            <option value="mar">mar</option>
+                                            <option value="abr">abr</option>
+                                            <option value="mai">mai</option>
+                                            <option value="jun">jun</option>
+                                            <option value="jul">jul</option>
+                                            <option value="ago">ago</option>
+                                            <option value="set">set</option>
+                                            <option value="out">out</option>
+                                            <option value="nov">nov</option>
+                                            <option value="dez">dez</option>
+                                        </select>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">TOTAL DE PÁGINAS:</label>
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.paginas}
+                                                disabled={true}/>
+                                        </div>
+                                    </div>
+                                    </div>
+                                )}
+                                
+                                {viewReferenceItem.tipoReferencia === "pdf" && (
+                                    <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO DO ARTIGO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.title}
+                                                disabled={true}/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" 
+                                                value={viewReferenceItem.autor}
+                                                disabled={true}/>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                                value={viewReferenceItem.local}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">MÊS:</label>
+                                        <select className="w-full border border-gray-500 rounded p-2"
+                                                value={viewReferenceItem.mes}
+                                                disabled={true}>
+                                            <option value="">Selecione o mês</option>
+                                            <option value="jan">jan</option>
+                                            <option value="fev">fev</option>
+                                            <option value="mar">mar</option>
+                                            <option value="abr">abr</option>
+                                            <option value="mai">mai</option>
+                                            <option value="jun">jun</option>
+                                            <option value="jul">jul</option>
+                                            <option value="ago">ago</option>
+                                            <option value="set">set</option>
+                                            <option value="out">out</option>
+                                            <option value="nov">nov</option>
+                                            <option value="dez">dez</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">VOLUME:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.volume}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">NÚMERO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.numero}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">ANO:</label>
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.ano}
+                                                disabled={true}/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">DOI:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.doi}
+                                                disabled={true}/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">URL DO DOCUMENTO:</label>
+                                        <input type="url" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.url}
+                                                disabled={true}/>
+                                    </div>
+                                    </div>
+                                )}
+                                
+                                {viewReferenceItem.tipoReferencia === "site" && (
+                                    <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO DA PÁGINA:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.title}
+                                                disabled={true}/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">AUTOR/RESPONSÁVEL:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                            value={viewReferenceItem.autor}
+                                            disabled={true}/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO DO SITE:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.tituloSite}
+                                                disabled={true}/>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">ANO DE PUBLICAÇÃO:</label>
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.ano}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">MÊS (SE HOUVER):</label>
+                                        <select className="w-full border border-gray-500 rounded p-2"
+                                                value={viewReferenceItem.mes}
+                                                disabled={true}>
+                                            <option value="">Selecione o mês</option>
+                                            <option value="jan">jan</option>
+                                            <option value="fev">fev</option>
+                                            <option value="mar">mar</option>
+                                            <option value="abr">abr</option>
+                                            <option value="mai">mai</option>
+                                            <option value="jun">jun</option>
+                                            <option value="jul">jul</option>
+                                            <option value="ago">ago</option>
+                                            <option value="set">set</option>
+                                            <option value="out">out</option>
+                                            <option value="nov">nov</option>
+                                            <option value="dez">dez</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">URL:</label>
+                                        <input type="url" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.url}
+                                                disabled={true}/>
+                                    </div>
+                                    </div>
+                                )}
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -308,13 +613,13 @@ export function References() {
                                 <h2 className="text-lg font-semibold">{!editReference ? "Preencha o formulário": "Editando"}</h2>
                             </div>
 
-                            <form onSubmit={handleSubmit}>
+                            <form>
                                 <div className="mb-6">
                                 <label className="block text-gray-700 font-medium mb-2">TIPO DE REFERÊNCIA:</label>
                                 <select 
                                     className="w-full px-4 py-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    value={tipoReferencia}
-                                    onChange={(e) => setTipoReferencia(e.target.value)}
+                                    value={referenceItem.tipoReferencia}
+                                    onChange={(e) => setReferenceItem((prev) => ({ ...prev, tipoReferencia:e.target.value}))}
                                     required
                                 >
                                     <option value="">Selecione o tipo</option>
@@ -325,254 +630,314 @@ export function References() {
                                 </select>
                                 </div>
                                 
-                                {tipoReferencia === "artigo" && (
+                                {referenceItem.tipoReferencia === "artigo" && (
                                     <div className="space-y-4">
                                     <div>
                                         <label className="block text-gray-700 mb-2">TÍTULO DO ARTIGO:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.title}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, title:e.target.value}))}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-gray-700 mb-2">TÍTULO DO PERIÓDICO:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" 
+                                                value={referenceItem.autor}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, autor:e.target.value}))}/>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">LOCAL:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Cidade" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                                value={referenceItem.local}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, local:e.target.value}))}/>
                                         </div>
                                         <div>
                                         <label className="block text-gray-700 mb-2">MÊS:</label>
-                                        <select className="w-full border border-gray-300 rounded p-2">
+                                        <select className="w-full border border-gray-500 rounded p-2"
+                                            value={referenceItem.mes}
+                                            onChange={(e) => setReferenceItem((prev) => ({ ...prev, mes:e.target.value}))}>
                                             <option value="">Selecione o mês</option>
-                                            <option value="jan.">jan.</option>
-                                            <option value="fev.">fev.</option>
-                                            <option value="mar.">mar.</option>
-                                            <option value="abr.">abr.</option>
-                                            <option value="maio">maio</option>
-                                            <option value="jun.">jun.</option>
-                                            <option value="jul.">jul.</option>
-                                            <option value="ago.">ago.</option>
-                                            <option value="set.">set.</option>
-                                            <option value="out.">out.</option>
-                                            <option value="nov.">nov.</option>
-                                            <option value="dez.">dez.</option>
+                                            <option value="jan">jan</option>
+                                            <option value="fev">fev</option>
+                                            <option value="mar">mar</option>
+                                            <option value="abr">abr</option>
+                                            <option value="mai">mai</option>
+                                            <option value="jun">jun</option>
+                                            <option value="jul">jul</option>
+                                            <option value="ago">ago</option>
+                                            <option value="set">set</option>
+                                            <option value="out">out</option>
+                                            <option value="nov">nov</option>
+                                            <option value="dez">dez</option>
                                         </select>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-3 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">VOLUME:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.volume}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, volume:e.target.value}))}/>
                                         </div>
                                         <div>
                                         <label className="block text-gray-700 mb-2">NÚMERO:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.numero}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, numero:e.target.value}))}/>
                                         </div>
                                         <div>
                                         <label className="block text-gray-700 mb-2">ANO:</label>
-                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.ano}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, ano:e.target.value}))}/>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                        <label className="block text-gray-700 mb-2">PÁGINAS:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: 45-60" />
-                                        </div>
-                                        <div>
+                                    <div>
                                         <label className="block text-gray-700 mb-2">DOI:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
-                                        </div>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.doi}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, doi:e.target.value}))}/>
                                     </div>
                                     </div>
                                 )}
                                 
-                                {tipoReferencia === "livro" && (
+                                {referenceItem.tipoReferencia === "livro" && (
                                     <div className="space-y-4">
                                     <div>
                                         <label className="block text-gray-700 mb-2">TÍTULO:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.title}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, title:e.target.value}))}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" 
+                                                value={referenceItem.autor}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, autor:e.target.value}))}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">EDIÇÃO:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: 2. ed." />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: 2. ed." 
+                                                value={referenceItem.edicao}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, edicao:e.target.value}))}/>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">LOCAL:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Cidade" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                                value={referenceItem.local}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, local:e.target.value}))}/>
                                         </div>
                                         <div>
                                         <label className="block text-gray-700 mb-2">EDITORA:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.editora}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, editora:e.target.value}))}/>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-3 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">ANO:</label>
-                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.ano}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, ano:e.target.value}))}/>
                                         </div>
                                         <div>
                                         <label className="block text-gray-700 mb-2">MÊS:</label>
-                                        <select className="w-full border border-gray-300 rounded p-2">
+                                        <select className="w-full border border-gray-500 rounded p-2"
+                                                value={referenceItem.mes}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, mes:e.target.value}))}>
                                             <option value="">Selecione o mês</option>
-                                            <option value="jan.">jan.</option>
-                                            <option value="fev.">fev.</option>
-                                            <option value="mar.">mar.</option>
-                                            <option value="abr.">abr.</option>
-                                            <option value="maio">maio</option>
-                                            <option value="jun.">jun.</option>
-                                            <option value="jul.">jul.</option>
-                                            <option value="ago.">ago.</option>
-                                            <option value="set.">set.</option>
-                                            <option value="out.">out.</option>
-                                            <option value="nov.">nov.</option>
-                                            <option value="dez.">dez.</option>
+                                            <option value="jan">jan</option>
+                                            <option value="fev">fev</option>
+                                            <option value="mar">mar</option>
+                                            <option value="abr">abr</option>
+                                            <option value="mai">mai</option>
+                                            <option value="jun">jun</option>
+                                            <option value="jul">jul</option>
+                                            <option value="ago">ago</option>
+                                            <option value="set">set</option>
+                                            <option value="out">out</option>
+                                            <option value="nov">nov</option>
+                                            <option value="dez">dez</option>
                                         </select>
                                         </div>
                                         <div>
                                         <label className="block text-gray-700 mb-2">TOTAL DE PÁGINAS:</label>
-                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.paginas}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, paginas:e.target.value}))}/>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-gray-700 mb-2">ISBN:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
                                     </div>
                                     </div>
                                 )}
                                 
-                                {tipoReferencia === "pdf" && (
+                                {referenceItem.tipoReferencia === "pdf" && (
                                     <div className="space-y-4">
                                     <div>
-                                        <label className="block text-gray-700 mb-2">TÍTULO:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <label className="block text-gray-700 mb-2">TÍTULO DO ARTIGO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.title}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, title:e.target.value}))}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" 
+                                                value={referenceItem.autor}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, autor:e.target.value}))}/>
                                     </div>
-                                    <div className="grid grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">LOCAL:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Cidade" />
-                                        </div>
-                                        <div>
-                                        <label className="block text-gray-700 mb-2">ANO:</label>
-                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                                value={referenceItem.local}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, local:e.target.value}))}/>
                                         </div>
                                         <div>
                                         <label className="block text-gray-700 mb-2">MÊS:</label>
-                                        <select className="w-full border border-gray-300 rounded p-2">
+                                        <select className="w-full border border-gray-500 rounded p-2"
+                                                value={referenceItem.mes}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, mes:e.target.value}))}>
                                             <option value="">Selecione o mês</option>
-                                            <option value="jan.">jan.</option>
-                                            <option value="fev.">fev.</option>
-                                            <option value="mar.">mar.</option>
-                                            <option value="abr.">abr.</option>
-                                            <option value="maio">maio</option>
-                                            <option value="jun.">jun.</option>
-                                            <option value="jul.">jul.</option>
-                                            <option value="ago.">ago.</option>
-                                            <option value="set.">set.</option>
-                                            <option value="out.">out.</option>
-                                            <option value="nov.">nov.</option>
-                                            <option value="dez.">dez.</option>
+                                            <option value="jan">jan</option>
+                                            <option value="fev">fev</option>
+                                            <option value="mar">mar</option>
+                                            <option value="abr">abr</option>
+                                            <option value="mai">mai</option>
+                                            <option value="jun">jun</option>
+                                            <option value="jul">jul</option>
+                                            <option value="ago">ago</option>
+                                            <option value="set">set</option>
+                                            <option value="out">out</option>
+                                            <option value="nov">nov</option>
+                                            <option value="dez">dez</option>
                                         </select>
                                         </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-gray-700 mb-2">INSTITUIÇÃO/ORGANIZAÇÃO:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">VOLUME:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.volume}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, volume:e.target.value}))}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">NÚMERO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.numero}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, numero:e.target.value}))}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">ANO:</label>
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.ano}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, ano:e.target.value}))}/>
+                                        </div>
                                     </div>
                                     <div>
-                                        <label className="block text-gray-700 mb-2">NÚMERO DE PÁGINAS:</label>
-                                        <input type="number" className="w-full border border-gray-300 rounded p-2" placeholder="Total de páginas" />
+                                        <label className="block text-gray-700 mb-2">DOI:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.doi}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, doi:e.target.value}))}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">URL DO DOCUMENTO:</label>
-                                        <input type="url" className="w-full border border-gray-300 rounded p-2" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-gray-700 mb-2">DATA DE ACESSO:</label>
-                                        <input type="date" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="url" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.url}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, url:e.target.value}))}/>
                                     </div>
                                     </div>
                                 )}
                                 
-                                {tipoReferencia === "site" && (
+                                {referenceItem.tipoReferencia === "site" && (
                                     <div className="space-y-4">
                                     <div>
                                         <label className="block text-gray-700 mb-2">TÍTULO DA PÁGINA:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.title}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, title:e.target.value}))}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">AUTOR/RESPONSÁVEL:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                            value={referenceItem.autor}
+                                            onChange={(e) => setReferenceItem((prev) => ({ ...prev, autor:e.target.value}))}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">TÍTULO DO SITE:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.tituloSite}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, tituloSite:e.target.value}))}/>
                                     </div>
-                                    <div className="grid grid-cols-3 gap-4">
-                                        <div>
-                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
-                                        <input type="text" className="w-full border border-gray-300 rounded p-2" placeholder="Cidade (se disponível)" />
-                                        </div>
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">ANO DE PUBLICAÇÃO:</label>
-                                        <input type="number" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="number" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.ano}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, ano:e.target.value}))}/>
                                         </div>
                                         <div>
                                         <label className="block text-gray-700 mb-2">MÊS (SE HOUVER):</label>
-                                        <select className="w-full border border-gray-300 rounded p-2">
+                                        <select className="w-full border border-gray-500 rounded p-2"
+                                                value={referenceItem.mes}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, mes:e.target.value}))}>
                                             <option value="">Selecione o mês</option>
-                                            <option value="jan.">jan.</option>
-                                            <option value="fev.">fev.</option>
-                                            <option value="mar.">mar.</option>
-                                            <option value="abr.">abr.</option>
-                                            <option value="maio">maio</option>
-                                            <option value="jun.">jun.</option>
-                                            <option value="jul.">jul.</option>
-                                            <option value="ago.">ago.</option>
-                                            <option value="set.">set.</option>
-                                            <option value="out.">out.</option>
-                                            <option value="nov.">nov.</option>
-                                            <option value="dez.">dez.</option>
+                                            <option value="jan">jan</option>
+                                            <option value="fev">fev</option>
+                                            <option value="mar">mar</option>
+                                            <option value="abr">abr</option>
+                                            <option value="mai">mai</option>
+                                            <option value="jun">jun</option>
+                                            <option value="jul">jul</option>
+                                            <option value="ago">ago</option>
+                                            <option value="set">set</option>
+                                            <option value="out">out</option>
+                                            <option value="nov">nov</option>
+                                            <option value="dez">dez</option>
                                         </select>
                                         </div>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">URL:</label>
-                                        <input type="url" className="w-full border border-gray-300 rounded p-2" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-gray-700 mb-2">DATA DE ACESSO:</label>
-                                        <input type="date" className="w-full border border-gray-300 rounded p-2" />
+                                        <input type="url" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.url}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, url:e.target.value}))}/>
                                     </div>
                                     </div>
                                 )}
                                     
-                                    <div className="flex justify-end mt-8">
-                                    <button 
-                                        type="button" 
-                                        className="px-6 py-2 mr-4 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none"
-                                        onClick={resetForm}
-                                    >
-                                        Cancelar
-                                    </button>
-                                    <button 
-                                        type="submit" 
-                                        className="px-6 py-2 rounded-md bg-blue-900 text-white hover:bg-blue-800 focus:outline-none"
-                                    >
-                                        Salvar Referência
-                                    </button>
+                                    <div className={`${!editReference && 'hidden'} flex justify-end gap-2 mt-8`}>
+                                    
+                                        {/* Cancelar Button */}
+                                        <button
+                                            onClick={() => {
+                                                setEditReference(false);
+                                                resetForm();
+                                                setFieldBusca(true);
+                                            }}
+                                            type="button" 
+                                            className={`w-[10%] py-2 text-red-500 hover:text-red-700 bg-red-200 flex items-center justify-center rounded-[8px]`}>
+                                            <X size={25}/>
+                                        </button>
+
+                                        {/* Salvar Button */}
+                                        <button
+                                            disabled={disableButton}
+                                            onClick={updateReference}
+                                            type="button" 
+                                            className={`w-[10%] py-2 text-green-500 hover:text-green-700 flex items-center bg-green-200 justify-center rounded-[8px]`}>
+                                            <Check size={25}/>
+                                        </button>
+                                    </div>
+
+                                    <div className={`${editReference && 'hidden'} flex justify-end mt-8`}>
+                                    
+                                        <button onClick={addNewReference}
+                                            type="button" 
+                                            className={`${referenceItem.tipoReferencia === "" && 'hidden'} w-[10%] flex items-center justify-center px-4 py-2 border-[2px] border-black bg-black rounded text-white hover:bg-mygray-600`}
+                                        >
+                                            <img width={25} height={25} src="\src\assets\AddWhite.png" alt="" />
+                                        </button>
                                     </div>
                             </form>
                         </div>
@@ -587,7 +952,7 @@ export function References() {
                                 <div className="relative flex-grow">
                                 <input
                                     type="text"
-                                    placeholder="Palavra"
+                                    placeholder="Título"
                                     className="w-full pl-4 pr-24 py-2 border border-gray-500 rounded"
                                     value={busca}
                                     onChange={(e) => setBusca(e.target.value)}
@@ -612,7 +977,8 @@ export function References() {
                             
                             <div className="flex space-x-2">
                                 <button type="button" onClick={() => {
-                                        setReferenceItem(reference);
+                                        setReferenceItem((prev) => (reference));
+                                        console.log(referenceItem);
                                         setFieldBusca(false);
                                         setEditReference(true);
                                     }} className={`${login !== "admin"? "hidden" : ""} ${editReference && referenceItem.id === reference.id ? "hidden": ""}  p-1 text-gray-600 hover:text-blue-600`}>
@@ -621,7 +987,7 @@ export function References() {
 
                                 <button type="button" 
                                     onClick={() => {
-                                        setViewReferenceItem(reference);
+                                        setViewReferenceItem((prev) => (reference));
                                         setOpenView(true);
                                     }}
                                     className="p-1 text-gray-600 hover:text-blue-600">
@@ -656,7 +1022,10 @@ export function References() {
                                 CANCELAR
                             </button>
                             <button type="button"
-                                onClick={() => setFieldBusca(false)} className={`${!fieldBusca && "hidden"} flex items-center px-4 py-2 border-[2px] border-black bg-black rounded text-white hover:bg-mygray-600`}>
+                                onClick={() => {
+                                        setFieldBusca(false);
+                                        resetForm();    
+                                    }} className={`${!fieldBusca && "hidden"} flex items-center px-4 py-2 border-[2px] border-black bg-black rounded text-white hover:bg-mygray-600`}>
                                 <Plus size={18} className="mr-1" />
                                 <span>CADASTRAR</span>
                             </button>
@@ -671,7 +1040,7 @@ export function References() {
 
 
 
-        <div className="grid grid-cols-[250px_1fr] h-screen">
+        {/* <div className="grid grid-cols-[250px_1fr] h-screen">
             <Sidebar levelAccount={login} selected={5}/>
             <div className="px-[15svh] overflow-y-auto">
                 <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
@@ -709,7 +1078,6 @@ export function References() {
                 <div className={`flex items-center justify-start ${openView? "mt-[2%]": "mt-[10%]"}`}>
                     <div className="bg-mygray-200 p-2 rounded-[8px] border-[2px] border-mygray-500">
 
-                        {/* Campo buscar */}
                         <div className={`${!fieldBusca && 'hidden'} mb-2 w-[100%] flex justify-center items-center`}>
                             <input className="bg-white border-[2px] border-r-[0px] border-mygray-500 rounded-l-[8px] pl-2 h-[35px] w-[230px]"
                             type="text" 
@@ -721,7 +1089,6 @@ export function References() {
                             </button>
                         </div>
 
-                        {/* Campo editar */}
                         <div className={`${fieldBusca && 'hidden'} mb-2 ${editReference === true ? "min-w-[500px]": "min-w-[400px]"}`}>
                             <div className="w-[100%] flex justify-between mb-2">
                                 <input className={`bg-white border-[2px] border-mygray-500 rounded-[8px] pl-2 h-[35px] ${editReference == true ? "w-[55%]": "w-[80%]"}`}
@@ -730,7 +1097,6 @@ export function References() {
                                 placeholder="Título"
                                 onChange={(e) => setReferenceItem((prev) => ({...prev, title:e.target.value}))}/>
 
-                                {/* Adicionar Button */}
                                 <button
                                     onClick={addNewReference}
                                     type="button" 
@@ -738,7 +1104,6 @@ export function References() {
                                     <img width={25} height={25} src="\src\assets\AddWhite.png" alt="" />
                                 </button>
 
-                                {/* Cancelar Button */}
                                 <button
                                     onClick={() => {
                                         setEditReference(false);
@@ -749,7 +1114,6 @@ export function References() {
                                     CANCELAR
                                 </button>
 
-                                {/* Salvar Button */}
                                 <button
                                     disabled={disableButton}
                                     onClick={updateReference}
@@ -842,11 +1206,11 @@ export function References() {
                     </div>
                 </div>
             </div>        
-        </div>
+        </div> */}
 
         {confirmModal && (
             <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="bg-white p-6 rounded-[8px] w-[25%]">
+                <div className="bg-white p-6 rounded-md w-[25%]">
                     <div className="flex justify-between h-[10%] mb-3">
                         <div className="font-bold h-[24px] justify-center text-[18px] pl-8 flex items-center w-[90%]">
                             CONFIRMAÇÃO
@@ -881,18 +1245,18 @@ export function References() {
 
 
                     
-                    <div className="h-[20%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => {
                                 setConfirmModal(false);
                                 setIdDelet('');
                             }} 
-                            className="w-[300px] border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
+                            className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
                             CANCELAR
                         </button>
                         <button type="button"
                             disabled={disableButton}
                             onClick={deleteReference} 
-                            className="w-[300px] border-[2px] border-black bg-black rounded-[8px] text-white hover:bg-mygray-600">
+                            className="flex justify-center items-center w-[150px] bg-gray-900 text-white px-10 py-2 rounded-md hover:bg-gray-800">
                             EXCLUIR
                         </button>
                     </div>
