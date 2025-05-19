@@ -23,7 +23,7 @@ export function Eimerias(){
     const [filtradas, setFiltradas] = useState<eimeriaProps[]>([]);
     const [busca, setBusca] = useState('');
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
-    const [idDelet, setIdDelet] = useState<string>('');
+    const [idDelet, setIdDelet] = useState<eimeriaProps | null>();
     const [login, setLogin] = useState<string>("");
     
     useEffect(() => {
@@ -68,7 +68,9 @@ export function Eimerias(){
 
     const deleteEspecie = async () =>{
         try {
-            await EimeriaService.delete(idDelet);
+            if (idDelet) {
+                await EimeriaService.delete(idDelet.id, idDelet.name);
+            }
             setShowNotification({
                 active: true,
                 mensage: "Espécie deletada",
@@ -153,7 +155,7 @@ export function Eimerias(){
                                 <button type="button"
                                         onClick={() => {
                                             setConfirmModal(true);
-                                            setIdDelet(specie.id);
+                                            setIdDelet(specie);
                                         }} 
                                         className={`${login !== "admin"? "hidden" : ""} p-1 text-red-500 hover:text-red-700`}>
                                     <Trash2 size={18} />
@@ -188,7 +190,7 @@ export function Eimerias(){
                         </div>
                         <button type="button" onClick={() => {
                                 setConfirmModal(false);
-                                setIdDelet('');
+                                setIdDelet(null);
                             }}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

@@ -1,7 +1,8 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, Timestamp, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { db, storage } from "../../firebaseConfig";
+import { auth, db, storage } from "../../firebaseConfig";
 import { ScientificNamesService } from "./scientificNamesService";
+import { AccountService } from "./accountService";
 
 
 export interface Iscore {
@@ -98,15 +99,46 @@ export const EimeriaService = {
                 score: updatedScores,
             });
 
-            await ScientificNamesService.addNew({id: '', name: data.name})
+            await ScientificNamesService.addNew({id: '', name: data.name});
+
+            const uid = auth.currentUser?.uid;
+
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: id, 
+                    name: data.name, 
+                    action: 'Cadastro de nova espécie', 
+                    entity: 'Eimeria', 
+                    timestamp: Timestamp.now()
+                }
+
+                await AccountService.updateActivity(newHistoric)
+            }
+
         } catch (error) {
             throw error;
         }
     },
 
-    async delete(id:string) {
+    async delete(id:string, name: string) {
         try {
             await deleteDoc(doc(db, 'eimerias', id));
+
+            const uid = auth.currentUser?.uid;
+            
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: id, 
+                    name: name, 
+                    action: 'Excluido espécie', 
+                    entity: 'Eimeria', 
+                    timestamp: Timestamp.now()
+                }
+
+                await AccountService.updateActivity(newHistoric)
+            }
           } catch (error) {
             throw error
           }
@@ -181,6 +213,21 @@ export const EimeriaService = {
             };
         
             await updateDoc(docRef, dadosAtualizados);
+
+            const uid = auth.currentUser?.uid;
+            
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: data.id, 
+                    name: data.name, 
+                    action: 'Atualizando espécie', 
+                    entity: 'Eimeria', 
+                    timestamp: Timestamp.now()
+                }
+
+                await AccountService.updateActivity(newHistoric)
+            }
         
             console.log('Eimeria atualizada com sucesso!');
           } catch (error) {

@@ -1,5 +1,6 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { addDoc, collection, deleteDoc, doc, getDocs, Timestamp, updateDoc } from "firebase/firestore";
+import { auth, db } from "../../firebaseConfig";
+import { AccountService } from "./accountService";
 
 export interface IReference {
     id:string,
@@ -35,6 +36,7 @@ export const ReferencesService = {
     async addNew(data:IReference) {
         try {
             let referenceRef = null
+            let id = ''
 
             if (data.tipoReferencia === 'artigo' && data.autor && data.local && data.mes && data.volume && data.numero) {
 
@@ -64,7 +66,7 @@ export const ReferencesService = {
                     });
                 }
 
-                const id = referenceRef.id;
+                id = referenceRef.id;
 
                 await updateDoc(referenceRef, {
                     id: id
@@ -100,7 +102,7 @@ export const ReferencesService = {
                     });
                 }
 
-                const id = referenceRef.id;
+                id = referenceRef.id;
 
                 await updateDoc(referenceRef, {
                     id: id
@@ -118,7 +120,7 @@ export const ReferencesService = {
                     paginas: data.paginas.trim(),
                 });
 
-                const id = referenceRef.id;
+                id = referenceRef.id;
 
                 await updateDoc(referenceRef, {
                     id: id
@@ -133,13 +135,29 @@ export const ReferencesService = {
                     mes: data.mes.trim(),
                     tituloSite: data.tituloSite.trim(),
                 });
-                const id = referenceRef.id;
+                id = referenceRef.id;
 
                 await updateDoc(referenceRef, {
                     id: id
                 });
             } else {
                 throw "Campos inválidos"
+            }
+
+
+            const uid = auth.currentUser?.uid;
+            
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: id, 
+                    name: data.title, 
+                    action: 'Cadastro de nova referência', 
+                    entity: 'Referencias', 
+                    timestamp: Timestamp.now()
+                }
+
+                await AccountService.updateActivity(newHistoric)
             }
         } catch (error) {
             throw error;
@@ -229,15 +247,46 @@ export const ReferencesService = {
             } else {
                 throw "Campos inválidos"
             }
+
+            const uid = auth.currentUser?.uid;
+            
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: data.id, 
+                    name: data.title, 
+                    action: 'Atualizando referência', 
+                    entity: 'Referencias', 
+                    timestamp: Timestamp.now()
+                }
+
+                await AccountService.updateActivity(newHistoric)
+            }
+
         } catch (error) {
             throw error;
         }
 
     },
 
-    async delete(id:string) {
+    async delete(id:string, title: string) {
         try {
             await deleteDoc(doc(db, 'reference', id));
+
+            const uid = auth.currentUser?.uid;
+            
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: id, 
+                    name: title, 
+                    action: 'Excluido referência', 
+                    entity: 'Referencias', 
+                    timestamp: Timestamp.now()
+                }
+
+                await AccountService.updateActivity(newHistoric)
+            }
           } catch (error) {
             throw error
           }

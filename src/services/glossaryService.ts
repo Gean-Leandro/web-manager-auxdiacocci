@@ -1,5 +1,6 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { addDoc, collection, deleteDoc, doc, getDocs, Timestamp, updateDoc } from "firebase/firestore";
+import { auth, db } from "../../firebaseConfig";
+import { AccountService } from "./accountService";
 
 export interface Iglossary {
     id: string,
@@ -32,6 +33,22 @@ export const GlossaryService = {
             await updateDoc(glossaryRef, {
                 id: id
             });
+
+            const uid = auth.currentUser?.uid;
+            
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: id, 
+                    name: data.word, 
+                    action: 'Cadastro de nova palavra', 
+                    entity: 'Glossário', 
+                    timestamp: Timestamp.now()
+                }
+
+                await AccountService.updateActivity(newHistoric)
+            }
+
         } catch (error) {
             throw error;
         }
@@ -43,15 +60,45 @@ export const GlossaryService = {
                 word: data.word.trim(),
                 meaning: data.meaning.trim()
             });
+
+            const uid = auth.currentUser?.uid;
+
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: data.id, 
+                    name: data.word, 
+                    action: 'Atualizando palavra', 
+                    entity: 'Glossário', 
+                    timestamp: Timestamp.now()
+                }
+
+                await AccountService.updateActivity(newHistoric)
+            }
         } catch (error) {
             throw error;
         }
 
     },
 
-    async delete(id:string) {
+    async delete(id:string, word: string) {
         try {
             await deleteDoc(doc(db, 'glossary', id));
+
+            const uid = auth.currentUser?.uid;
+
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: id, 
+                    name: word, 
+                    action: 'Excluido palavra', 
+                    entity: 'Glossário', 
+                    timestamp: Timestamp.now()
+                }
+
+                await AccountService.updateActivity(newHistoric)
+            }
           } catch (error) {
             throw error
           }

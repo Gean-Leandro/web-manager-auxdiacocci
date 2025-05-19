@@ -9,20 +9,28 @@ import { Sidebar } from '../../components/sidebar';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { AccountService } from '../../services/accountService';
+import { AccountService, IAccount } from '../../services/accountService';
 import { auth } from '../../../firebaseConfig';
   
 export default function Dashboard() {
 
-    const [login, setLogin] = useState<string>("");
+    const [login, setLogin] = useState<IAccount>({
+        uid: '',
+        name: '',
+        email: '',
+        level: '',
+        active: true,
+        historic: [],
+    });
 
     useEffect(() => {
         document.title = "Cadastros de Eimerias";
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const uid = user.uid;
-                const query = await AccountService.getAccountLevel(uid);
+                const query = await AccountService.getAccount(uid);
                 setLogin(query);
+                console.log(query);
             } 
         })
         return () => {
@@ -34,7 +42,7 @@ export default function Dashboard() {
         <div className="flex h-screen w-full bg-gray-100">
         
             {/* Sidebar azul escura */}
-            <Sidebar levelAccount={login} selected={1}/>
+            <Sidebar levelAccount={login.level} selected={1}/>
             
             {/* Conteúdo principal */}
             <div className="flex-1 overflow-auto">
@@ -110,19 +118,53 @@ export default function Dashboard() {
                 <div className="mx-6 mb-6 bg-white rounded-lg shadow overflow-hidden">
                     <div className="p-6">
                         <h2 className="text-xl font-bold mb-4">Atividades recente</h2>
-                        <p className="text-blue-600">você ainda não adicionou nenhuma entrada</p>
+                        { login.historic.length === 0  &&
+                            <p className="text-blue-600">você ainda não adicionou nenhuma entrada</p>
+                        }
                     </div>
                     
+                    <div className='border-t flex w-[100%] items-center py-2 border-b hover:bg-gray-50'>
+                        <p className='border-x w-[40%] flex justify-center items-center font-bold'>Tipo</p>
+                        <p className='border-x w-[30%] flex justify-center items-center font-bold'>Item</p>
+                        <p className='border-x w-[20%] flex justify-center items-center font-bold'>Entidade</p>
+                        <p className='border-x w-[20%] flex justify-center items-center font-bold'>Data/Hora</p>
+                    </div>
                     {/* Área vazia com ícone */}
-                    <div className="flex flex-col items-center justify-center py-20 px-6 border-t">
-                        <div className="bg-gray-100 p-6 rounded-full mb-4">
-                        <div className="w-16 h-16 flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" className="w-12 h-12 text-gray-300" stroke="currentColor" fill="none">
-                            <circle cx="12" cy="12" r="10" strokeWidth="1" />
-                            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" strokeWidth="1" />
-                            </svg>
-                        </div>
-                        </div>
+                    <div className="h-[220px] overflow-y-auto border-t-4">
+                        { login.historic.length === 0 ?
+                            <div className='w-[100%] h-[100%] flex justify-center items-center'>
+                                <div className="bg-gray-100 p-6 rounded-full mb-4">
+                                    <div className="w-16 h-16 flex items-center justify-center">
+                                        <svg viewBox="0 0 24 24" className="w-12 h-12 text-gray-300" stroke="currentColor" fill="none">
+                                        <circle cx="12" cy="12" r="10" strokeWidth="1" />
+                                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" strokeWidth="1" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>:
+
+                            <>
+                                {login?.historic && login.historic.map((item, index) => (
+                                    <div key={index} 
+                                        className="flex w-[100%] items-center justify-between h-[40px] border-b hover:bg-gray-50">
+                                        
+                                        <p className='border-x w-[40%] flex justify-center break-words items-center'>
+                                            {item.action}
+                                        </p>
+                                        <p className='border-x w-[30%] flex justify-center break-words items-center'>
+                                            {item.name}
+                                        </p>
+                                        <p className='border-x w-[20%] flex justify-center break-words items-center'>
+                                            {item.entity}
+                                        </p>
+                                        <p className='border-x w-[20%] flex justify-center break-words items-center'>
+                                            {item.timestamp.toDate().toLocaleString()}
+                                        </p>
+                                    </div>
+                                ))
+                                }
+                            </>
+                        }
                     </div>
                 </div>
             </div>

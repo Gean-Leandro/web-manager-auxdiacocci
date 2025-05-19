@@ -12,7 +12,7 @@ export function Profile() {
         {active:false, mensage:"", bgColor:""}
     );
     const [disableButton, setDisableButton] = useState<boolean>(false);
-    const [login, setLogin] = useState<IAccount>({uid:'', name:'', email: '', level:'', active: true});
+    const [login, setLogin] = useState<IAccount>({uid:'', name:'', email: '', level:'', active: true, historic: []});
     const [name, setName] = useState<string>('');
     const [password, setPassword] = useState<{oldPassword: string, password:string, confirmPassword:string}>({oldPassword: '', password:'', confirmPassword:''});
     const [editName, setEditName] = useState<boolean>(false);

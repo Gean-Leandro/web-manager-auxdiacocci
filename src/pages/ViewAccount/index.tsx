@@ -98,7 +98,7 @@ export function ViewAccount() {
                 
                     <div className="flex justify-end space-x-4 mt-8">
                         <Link to={'/contas'} className="border border-gray-500 bg-white text-gray-800 px-6 py-2 rounded-md hover:bg-gray-100">
-                            CANCELAR
+                            VOLTAR
                         </Link>
 
                         <Link to={'/editando-conta'} 
@@ -108,7 +108,61 @@ export function ViewAccount() {
                         </Link>
                     </div>
                 </div>
-            </div>       
+                
+                {/* Atividades recentes */}
+                <div className="my-6 bg-white rounded-lg shadow overflow-hidden">
+                    <div className="p-6">
+                        <h2 className="text-xl font-bold mb-4">Atividades recente</h2>
+                        { account.historic.length === 0  &&
+                            <p className="text-blue-600">você ainda não adicionou nenhuma entrada</p>
+                        }
+                    </div>
+                    
+                    <div className='border-t flex w-[100%] items-center py-2 border-b hover:bg-gray-50'>
+                        <p className='border-x w-[40%] flex justify-center items-center font-bold'>Tipo</p>
+                        <p className='border-x w-[30%] flex justify-center items-center font-bold'>Item</p>
+                        <p className='border-x w-[20%] flex justify-center items-center font-bold'>Entidade</p>
+                        <p className='border-x w-[20%] flex justify-center items-center font-bold'>Data/Hora</p>
+                    </div>
+                    {/* Área vazia com ícone */}
+                    <div className="h-[220px] overflow-y-auto border-t-4">
+                        { account.historic.length === 0 ?
+                            <div className='w-[100%] h-[100%] flex justify-center items-center'>
+                                <div className="bg-gray-100 p-6 rounded-full mb-4">
+                                    <div className="w-16 h-16 flex items-center justify-center">
+                                        <svg viewBox="0 0 24 24" className="w-12 h-12 text-gray-300" stroke="currentColor" fill="none">
+                                        <circle cx="12" cy="12" r="10" strokeWidth="1" />
+                                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" strokeWidth="1" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>:
+
+                            <>
+                                { account.historic.map((item, index) => (
+                                    <div key={index} 
+                                        className="flex w-[100%] items-center justify-between h-[40px] border-b hover:bg-gray-50">
+                                        
+                                        <p className='border-x w-[40%] flex justify-center break-words items-center'>
+                                            {item.action}
+                                        </p>
+                                        <p className='border-x w-[30%] flex justify-center break-words items-center'>
+                                            {item.name}
+                                        </p>
+                                        <p className='border-x w-[20%] flex justify-center break-words items-center'>
+                                            {item.entity}
+                                        </p>
+                                        <p className='border-x w-[20%] flex justify-center break-words items-center'>
+                                            {item.timestamp.toDate().toLocaleString()}
+                                        </p>
+                                    </div>
+                                ))
+                                }
+                            </>
+                        }
+                    </div>
+                </div>   
+            </div>
         </div>
         </>
     )

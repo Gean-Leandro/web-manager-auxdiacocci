@@ -20,7 +20,7 @@ export function Glossary() {
     const [openView, setOpenView] = useState<boolean>(false);
     const [viewGlossaryItem, setViewGlossaryItem] = useState<Iglossary>({id: '', word: '', meaning: ''});
     const [glossaryItem, setGlossaryItem] = useState<Iglossary>({id: '', word: '', meaning: ''});
-    const [idDelet, setIdDelet] = useState<string>('');
+    const [idDelet, setIdDelet] = useState<Iglossary|null>();
     const [editGlossary, setEditGlossary] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [login, setLogin] = useState<string>("");
@@ -170,7 +170,9 @@ export function Glossary() {
     
     const deleteWord = async () => {
         try {
-            await GlossaryService.delete(idDelet);
+            if(idDelet){
+                await GlossaryService.delete(idDelet.id, idDelet.word);
+            }
             updateGlossaryList();
             setShowNotification({
                 active: true, 
@@ -356,7 +358,7 @@ export function Glossary() {
                                 <button type="button"
                                         onClick={() => {
                                             setConfirmModal(true);
-                                            setIdDelet(word.id);
+                                            setIdDelet(word);
                                         }} 
                                         className={`${login !== "admin"? "hidden" : ""} p-1 text-red-500 hover:text-red-700`}>
                                     <Trash2 size={18} />
@@ -397,7 +399,7 @@ export function Glossary() {
                         </div>
                         <button type="button" onClick={() => {
                                 setConfirmModal(false);
-                                setIdDelet('');
+                                setIdDelet(null);
                             }}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -428,7 +430,7 @@ export function Glossary() {
                     <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => {
                                 setConfirmModal(false);
-                                setIdDelet('');
+                                setIdDelet(null);
                             }} 
                             className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
                             CANCELAR

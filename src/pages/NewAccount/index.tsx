@@ -11,7 +11,7 @@ export function NewAccount() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    const [accountItem, setAccountItem] = useState<IAccount>({uid: '', name: '', email:'', level:'', active: true});
+    const [accountItem, setAccountItem] = useState<IAccount>({uid: '', name: '', email:'', level:'', active: true, historic: []});
     const [level, setLevel] = useState<string>('user');
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [erro, setErro] = useState<{campo: string, mensage: string}>({campo: '', mensage:''});

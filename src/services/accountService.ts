@@ -1,13 +1,22 @@
 import { createUserWithEmailAndPassword, EmailAuthProvider, getAuth, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, updatePassword  } from "firebase/auth";
-import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { auth, db } from '../../firebaseConfig';
+
+
 
 export interface IAccount {
     uid: string,
     name: string,
     email: string,
     level: string,
-    active: boolean
+    active: boolean,
+    historic: [{
+        id: string,
+        name: string, 
+        action: string, 
+        entity: string, 
+        timestamp: Timestamp
+    }] | []
 }
 
 export const AccountService = {
@@ -27,8 +36,24 @@ export const AccountService = {
                 name: nome,
                 level: nivel,
                 email: email,
-                active: true
+                active: true,
+                historic: []
             });
+
+            const uid = auth.currentUser?.uid;
+            
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: user.uid, 
+                    name: nome, 
+                    action: 'Cadastrando nova conta', 
+                    entity: 'Contas', 
+                    timestamp: Timestamp.now()
+                }
+
+                await this.updateActivity(newHistoric)
+            }
         } catch (error) {
             throw error
         }
@@ -71,7 +96,8 @@ export const AccountService = {
                     name: docSnap.data().name,
                     email: docSnap.data().email,
                     level: docSnap.data().level,
-                    active: docSnap.data().active
+                    active: docSnap.data().active,
+                    historic: docSnap.data().historic
                 };
             } else {
                 throw "Usuário não encontrado na coleção accounts.";
@@ -98,6 +124,44 @@ export const AccountService = {
                 name: account.name,
                 level: account.level,
                 active: account.active
+            });
+
+            const uid = auth.currentUser?.uid;
+            
+            if (uid) {
+                const newHistoric = {
+                    uid: uid,
+                    id: account.uid, 
+                    name: account.name, 
+                    action: 'Atualizando conta', 
+                    entity: 'Contas', 
+                    timestamp: Timestamp.now()
+                }
+
+                await this.updateActivity(newHistoric)
+            }
+          } catch (error) {
+            throw error
+          }
+    },
+    
+    async updateActivity(data:{ uid: string, id: string, name: string, action: string, entity: string, timestamp: Timestamp }) {
+        const docRef = doc(db, 'accounts', data.uid);
+
+        try {
+
+            const account = await this.getAccount(data.uid);
+            
+            const newHistoric = [{
+                id: data.id,
+                name: data.name,
+                action: data.action,
+                entity: data.entity,
+                timestamp: data.timestamp
+            }, ...(account.historic || [])];
+
+            await updateDoc(docRef, {
+                historic: newHistoric
             });
           } catch (error) {
             throw error

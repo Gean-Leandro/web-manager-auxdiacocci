@@ -82,8 +82,8 @@ export function Login() {
 
 <div className="flex h-screen w-full">
       {/* Área azul escura à esquerda */}
-      <div className="bg-[#103356] flex items-center justify-center w-2/3">
-      <div className='flex justify-center items-center bg-white shadow rounded-md pl-12  py-12 w-full mr-12'>
+      <div className="bg-white flex items-center justify-center w-2/3">
+      <div className='flex justify-center items-center bg-white w-full'>
       <svg width="289" height="337" viewBox="0 0 359 427" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M341.182 260.978C331.891 273.416 268.355 316.238 272.603 315.172C277.912 313.839 325.254 277.858 326.581 280.524C327.909 283.189 303.132 300.957 305.344 300.957" stroke="black" stroke-linecap="round"/>
                 <path d="M345.521 42.8036C343.613 46.2136 335.885 51.0852 337.412 51.0852C339.32 51.0852 348.86 45.7265 349.338 46.7008C349.815 47.6751 343.136 50.598 344.09 51.0852C345.044 51.5723 349.815 48.1623 350.292 49.1366C350.769 50.1109 347.429 51.0852 347.906 51.5723C348.383 52.0595 352.2 50.1109 351.723 52.0595" stroke="black" stroke-linecap="round"/>
@@ -105,28 +105,29 @@ export function Login() {
       </div>
       
       {/* Painel de login à direita */}
-      <div className="bg-white w-1/3 p-8 flex flex-col h-[100%] justify-center">
+      <div className="bg-[#103356] w-1/3 p-8 rounded-l-lg flex flex-col h-[100%] justify-center">
         {/* Logo */}
         <div className="mb-12">
           <div className='flex justify-center items-center'>
             <div>
-              <p className='tracking-[0.1em] text-[25px]'>GUIA ILUSTRATIVO DA</p>
-              <p className='font-bold text-[30px]'>COCCIDIOSE AVIÁRIA</p>
+              <p className='tracking-[0.1em] text-white text-[25px]'>GUIA ILUSTRATIVO DA</p>
+              <p className='font-bold text-white text-[30px]'>COCCIDIOSE AVIÁRIA</p>
+              <p className='font-bold text-center text-gray-200 text-[20px]'>---- GERENCIADOR WEB ----</p>
             </div>
           </div>
         </div>
         
         {/* Título de login */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Login</h1>
-          <p className="text-gray-600">Faça o login para ter acesso ao gerenciador web</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Login</h1>
+          <p className="text-gray-100">Faça o login para ter acesso ao gerenciador web</p>
         </div>
         
         {/* Formulário */}
         <div className="space-y-6">
           {/* Campo de email */}
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-gray-800">
+            <label htmlFor="email" className="block text-gray-100">
               Email
             </label>
             <div className="relative">
@@ -149,7 +150,7 @@ export function Login() {
           
           {/* Campo de senha */}
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-gray-800">
+            <label htmlFor="password" className="block text-gray-100">
               Password
             </label>
             <div className="relative">
@@ -202,7 +203,7 @@ export function Login() {
           
           {/* Link para cadastro */}
           <div className="text-center mt-6">
-            <span className="text-gray-600">Não possui conta? </span>
+            <span className="text-gray-100">Não possui conta? </span>
             <a onClick={() => setNewAccount(true) } className="text-blue-500 hover:underline">
               Cadastre-se.
             </a>
