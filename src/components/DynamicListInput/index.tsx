@@ -93,7 +93,7 @@ export function DynamicListInput(props:DynamicListInputProps) {
         <div className={`relative ${editDescriptionIndex === null ? "hidden": ""} py-2`}>
             <input 
                 type="text" 
-                className="border border-gray-300 pr-10  rounded-md px-3 py-3 w-full" 
+                className="border border-gray-500 pr-10  rounded-md px-3 py-3 w-full" 
                 placeholder={props.placeholder} 
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}

@@ -46,7 +46,7 @@ export const AccountService = {
                 const newHistoric = {
                     uid: uid,
                     id: user.uid, 
-                    name: nome, 
+                    name: email, 
                     action: 'Cadastrando nova conta', 
                     entity: 'Contas', 
                     timestamp: Timestamp.now()
@@ -116,15 +116,23 @@ export const AccountService = {
         }
     },
 
-    async updateAccount(account:IAccount) {
+    async updateAccount(account:IAccount, name?:string) {
         const docRef = doc(db, 'accounts', account.uid);
 
         try {
-            await updateDoc(docRef, {
-                name: account.name,
-                level: account.level,
-                active: account.active
-            });
+            if (name){
+                await updateDoc(docRef, {
+                    name: name,
+                    level: account.level,
+                    active: account.active
+                });
+            } else {
+                await updateDoc(docRef, {
+                    name: account.name,
+                    level: account.level,
+                    active: account.active
+                });
+            }
 
             const uid = auth.currentUser?.uid;
             
@@ -132,7 +140,7 @@ export const AccountService = {
                 const newHistoric = {
                     uid: uid,
                     id: account.uid, 
-                    name: account.name, 
+                    name: account.email, 
                     action: 'Atualizando conta', 
                     entity: 'Contas', 
                     timestamp: Timestamp.now()

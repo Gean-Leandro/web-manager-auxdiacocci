@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { AccountService, IAccount } from "../../services/accountService";
@@ -12,7 +12,7 @@ export function Accounts() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    const [filtradas, setFiltradas] = useState<IAccount[]>([]);
+    // const [filtradas, setFiltradas] = useState<IAccount[]>([]);
     const [busca, setBusca] = useState<string>('');
     const [login, setLogin] = useState<string>("");
 
@@ -22,7 +22,7 @@ export function Accounts() {
             const query = await AccountService.getAccounts();
             if (query.status === "OK") {
                 setAccounts(query.result);
-                setFiltradas(query.result);
+                // setFiltradas(query.result);
             } else {
                 setShowNotification({
                     active: true, 
@@ -45,16 +45,14 @@ export function Accounts() {
     }, []);
 
     const handleBuscar = () => {
-        if (busca.trim() === ''){
-            setFiltradas(accounts);
-        } else {    
-            const resultado = accounts.filter((item) =>
-                item.email.toLowerCase().includes(busca.toLowerCase())
-            );
-            setFiltradas(resultado);
-        }
+        filtradas
     };
 
+    const filtradas = useMemo(() => {
+        return accounts
+          .filter(item => item.email.toLowerCase().includes(busca.toLowerCase()))
+          .sort((a, b) => a.email.localeCompare(b.email));
+      }, [accounts, busca]);
 
     return(
         <>
@@ -94,7 +92,7 @@ export function Accounts() {
                                 <div className="relative flex-grow">
                                 <input
                                     type="text"
-                                    placeholder="Nome"
+                                    placeholder="E-mail"
                                     className="w-full pl-4 pr-24 py-2 border border-gray-500 rounded"
                                     value={busca}
                                     onChange={(e) => setBusca(e.target.value)}

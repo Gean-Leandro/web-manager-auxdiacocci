@@ -6,9 +6,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { UserCog } from "lucide-react";
+import { ScreamLoading } from "../../components/ScreamLoading";
 
 export function EditAccount() {
     const location = useLocation()
+    const navigate = useNavigate()
+    const locateAccount = location.state
 
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
@@ -18,6 +21,7 @@ export function EditAccount() {
     const [erro, setErro] = useState<{campo: string, mensage: string}>({campo: '', mensage:''});
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [login, setLogin] = useState<string>('');
+    const [load, setLoad] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setAccountItem((prev) => ({...prev, level:e.target.value}));
@@ -32,11 +36,20 @@ export function EditAccount() {
 
     useEffect(() => {
         document.title = "Editando conta";
+        
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const uid = user.uid;
                 const query = await AccountService.getAccountLevel(uid);
                 setLogin(query);
+
+                if (!locateAccount) {
+                    if (query === 'admin') {
+                        navigate('/contas');
+                    } else {
+                        navigate('/dashboard')
+                    }
+                }
             } 
         })
         return () => {
@@ -62,10 +75,9 @@ export function EditAccount() {
             return false;
         }
     }
-
-    const navigate = useNavigate();
     
     const updateAccount = async () => {
+        setLoad(true);
         setDisableButton(true);
         if (validateFields()){
             try {
@@ -86,8 +98,9 @@ export function EditAccount() {
             }
         }
         setDisableButton(false);
+        setLoad(false);
     }
-
+    
     return(
         <>
         {showNotification.active && (
@@ -97,7 +110,7 @@ export function EditAccount() {
             onClose={() => setShowNotification({active: false, mensage:"", bgColor:""})}
             />
         )}
-
+        {load && <ScreamLoading/>}
         <div className="flex h-screen bg-gray-100">
             <Sidebar levelAccount={login} selected={7}/>
             {/* Main Content */}

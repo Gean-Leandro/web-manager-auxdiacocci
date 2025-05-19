@@ -4,7 +4,6 @@ import { auth } from '../../../firebaseConfig';
 import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { Notification } from '../../components/Notification';
 import { AccountService } from '../../services/accountService';
-import logo from '../../assets/Logo.png';
 
 export function Login() {
   useEffect(() => {

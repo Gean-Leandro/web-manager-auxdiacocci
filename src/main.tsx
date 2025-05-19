@@ -17,6 +17,8 @@ import { Profile } from './pages/Profile';
 import { ViewAccount } from './pages/ViewAccount';
 import { EditAccount } from './pages/EditAccount';
 import Dashboard from './pages/Dashboard';
+import { SessionManager } from './components/SessionManager';
+import { NotFound } from './pages/NotFound';
 
 const router = createBrowserRouter([
   { path:'/', element: <Login/>},
@@ -33,10 +35,12 @@ const router = createBrowserRouter([
   { path:'/perfil', element: <PrivateRoute><Profile/></PrivateRoute>},
   { path:'/visualizando-conta', element: <PrivateRoute requireAdmin><ViewAccount/></PrivateRoute>},
   { path:'/editando-conta', element: <PrivateRoute requireAdmin><EditAccount/></PrivateRoute>},
+  { path:'*', element: <NotFound/>}
 ]);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
+    <SessionManager />
     <RouterProvider router={router}/>
   </StrictMode>
 )

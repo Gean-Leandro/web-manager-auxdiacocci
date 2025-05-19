@@ -3,9 +3,10 @@ import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { AccountService, IAccount } from "../../services/accountService";
 import { Link, useNavigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { UserCog } from "lucide-react";
+import { ScreamLoading } from "../../components/ScreamLoading";
 
 export function NewAccount() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
@@ -19,6 +20,7 @@ export function NewAccount() {
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [passwordAccount, setPasswordAccount] = useState<string>('');
     const [login, setLogin] = useState<string>('');
+    const [load, setLoad] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLevel(e.target.value);
@@ -76,9 +78,14 @@ export function NewAccount() {
     const navigate = useNavigate();
     
     const addNewAccount = async () => {
+        setLoad(true);
         setDisableButton(true);
         if (validateFields()){
             try {
+                const adminEmail = auth.currentUser?.email;
+                if (adminEmail) {
+                    await signInWithEmailAndPassword(auth, adminEmail, passwordAccount);
+                }
                 await AccountService.new(accountItem.email, password.password, accountItem.name, level, passwordAccount);
                 navigate('/contas');
                 setShowNotification({
@@ -86,15 +93,26 @@ export function NewAccount() {
                     mensage: "Nova conta cadastrada", 
                     bgColor: "bg-green-600"
                 });
-            } catch (error) {
-                setShowNotification({
-                    active: true, 
-                    mensage: "Error:" + error, 
-                    bgColor: "bg-orange-500"
-                });
+            } catch (error: any) {
+                if (error.code === "auth/invalid-credential"){
+                    setShowNotification({
+                        active: true, 
+                        mensage: "Error: senha da sua conta está incorreta", 
+                        bgColor: "bg-orange-500"
+                    });
+                } else {
+                    setShowNotification({
+                        active: true, 
+                        mensage: "Error: " + error, 
+                        bgColor: "bg-orange-500"
+                    });
+                }
             }
+        } else {
+            setConfirmModal(false);
         }
         setDisableButton(false);
+        setLoad(false);
     }
 
     return(
@@ -106,7 +124,7 @@ export function NewAccount() {
             onClose={() => setShowNotification({active: false, mensage:"", bgColor:""})}
             />
         )}
-
+        {load && <ScreamLoading/>}
 
         <div className="flex h-screen bg-gray-100">
             <Sidebar levelAccount={login} selected={7}/>
@@ -241,7 +259,7 @@ export function NewAccount() {
                         </div>
                     </div>
 
-                    <div className="h-[5%] flex justify-end items-center gap-2 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[5%] flex justify-between items-center gap-2 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => setConfirmModal(false)} 
                             className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
                             CANCELAR

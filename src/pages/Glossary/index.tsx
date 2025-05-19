@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { GlossaryService, Iglossary} from "../../services/glossaryService";
@@ -13,7 +13,6 @@ export function Glossary() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    const [filtradas, setFiltradas] = useState<Iglossary[]>([]);
     const [busca, setBusca] = useState<string>('');
     const [fieldBusca, setFieldBusca] = useState<boolean>(true);
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
@@ -31,7 +30,6 @@ export function Glossary() {
             const query = await GlossaryService.getGlossary();
             if (query.status === "OK") {
                 setGlossary(query.result);
-                setFiltradas(query.result);
             } else {
                 setShowNotification({
                     active: true, 
@@ -54,22 +52,20 @@ export function Glossary() {
     }, []);
 
     const handleBuscar = () => {
-        if (busca.trim() === ''){
-            setFiltradas(glossary);
-        } else {    
-            const resultado = glossary.filter((item) =>
-                item.word.toLowerCase().includes(busca.toLowerCase())
-            );
-            setFiltradas(resultado);
-        }
+        filtradas
     };
 
+    const filtradas = useMemo(() => {
+        return glossary
+          .filter(item => item.word.toLowerCase().includes(busca.toLowerCase()))
+          .sort((a, b) => a.word.localeCompare(b.word));
+    }, [glossary, busca]);
+    
     const updateGlossaryList = async () => {
         const query = await GlossaryService.getGlossary();
 
         if (query.status === "OK") {
             setGlossary(query.result);
-            setFiltradas(query.result);
         } else {
             setShowNotification({
                 active: true, 

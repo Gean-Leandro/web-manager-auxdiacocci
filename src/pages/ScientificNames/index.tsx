@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { ScientificNamesService, IScientificNames } from "../../services/scientificNamesService";
@@ -12,7 +12,6 @@ export function ScientificNames() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    const [filtradas, setFiltradas] = useState<IScientificNames[]>([]);
     const [busca, setBusca] = useState<string>('');
     const [fieldBusca, setFieldBusca] = useState<boolean>(true);
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
@@ -28,7 +27,6 @@ export function ScientificNames() {
             const query = await ScientificNamesService.getScientificNames();
             if (query.status === "OK") {
                 setScientificNames(query.result);
-                setFiltradas(query.result);
             } else {
                 setShowNotification({
                     active: true, 
@@ -52,22 +50,20 @@ export function ScientificNames() {
     }, []);
 
     const handleBuscar = () => {
-        if (busca.trim() === ''){
-            setFiltradas(scientificNames);
-        } else {    
-            const resultado = scientificNames.filter((item) =>
-                item.name.toLowerCase().includes(busca.toLowerCase())
-            );
-            setFiltradas(resultado);
-        }
+        filtradas
     };
+
+    const filtradas = useMemo(() => {
+        return scientificNames
+          .filter(item => item.name.toLowerCase().includes(busca.toLowerCase()))
+          .sort((a, b) => a.name.localeCompare(b.name));
+    }, [scientificNames, busca]);
 
     const updateScientificNamesList = async () => {
         const query = await ScientificNamesService.getScientificNames();
 
         if (query.status === "OK") {
             setScientificNames(query.result);
-            setFiltradas(query.result);
         } else {
             setShowNotification({
                 active: true, 
@@ -198,7 +194,7 @@ export function ScientificNames() {
             />
         )}
 
-<div className="flex h-screen bg-gray-100">
+        <div className="flex h-screen bg-gray-100">
             <Sidebar levelAccount={login} selected={4}/>
             <div className="flex-grow overflow-auto">
                 {/* Header */}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { ReferencesService, IReference } from "../../services/referencesService";
@@ -12,7 +12,6 @@ export function References() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    const [filtradas, setFiltradas] = useState<IReference[]>([]);
     const [busca, setBusca] = useState<string>('');
     const [fieldBusca, setFieldBusca] = useState<boolean>(true);
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
@@ -46,7 +45,6 @@ export function References() {
             const query = await ReferencesService.getReferences();
             if (query.status === "OK") {
                 setReferences(query.result);
-                setFiltradas(query.result);
             } else {
                 setShowNotification({
                     active: true, 
@@ -69,15 +67,14 @@ export function References() {
     }, []);
 
     const handleBuscar = () => {
-        if (busca.trim() === ''){
-            setFiltradas(references);
-        } else {    
-            const resultado = references.filter((item) =>
-                item.title.toLowerCase().includes(busca.toLowerCase())
-            );
-            setFiltradas(resultado);
-        }
+        filtradas
     };
+
+    const filtradas = useMemo(() => {
+        return references
+          .filter(item => item.title.toLowerCase().includes(busca.toLowerCase()))
+          .sort((a, b) => a.title.localeCompare(b.title));
+    }, [references, busca]);
 
     const validateFields = () => {
         switch (referenceItem.tipoReferencia) {
@@ -153,7 +150,6 @@ export function References() {
 
         if (query.status === "OK") {
             setReferences(query.result);
-            setFiltradas(query.result);
         } else {
             setShowNotification({
                 active: true, 
@@ -275,8 +271,8 @@ export function References() {
             />
         )}
 
-<div className="flex h-screen bg-gray-100">
-            <Sidebar levelAccount={login} selected={3}/>
+        <div className="flex h-screen bg-gray-100">
+            <Sidebar levelAccount={login} selected={5}/>
             <div className="flex-grow overflow-auto">
                 {/* Header */}
                 <div className="flex items-center p-6">

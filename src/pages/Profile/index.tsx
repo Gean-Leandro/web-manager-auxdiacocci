@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { AccountService, IAccount } from "../../services/accountService";
-import { Link } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { Edit2, User } from "lucide-react";
+import { ScreamLoading } from "../../components/ScreamLoading";
 
 export function Profile() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
@@ -18,6 +18,7 @@ export function Profile() {
     const [editName, setEditName] = useState<boolean>(false);
     const [editPassword, setEditPassword] = useState<boolean>(false);
     const [erro, setErro] = useState<{campo: string, mensage: string}>({campo: '', mensage:''});
+    const [load, setLoad] = useState<boolean>(false);
 
     useEffect(() => {
         document.title = "Perfil";
@@ -31,7 +32,7 @@ export function Profile() {
         return () => {
             unsubscribe();
         };
-    }, []);
+    }, [login]);
 
     const validateFields = ():boolean => {
 
@@ -76,11 +77,12 @@ export function Profile() {
 
     const updateAccount = async () => {
         setDisableButton(true);
+        setLoad(true);
+   
         if (validateFields()) {
             try {
                 if(editName) {
-                    setLogin((prev) => ({...prev, name: name}));
-                    await AccountService.updateAccount(login);
+                    await AccountService.updateAccount(login, name);
                 }
                 if(editPassword) {
                     await AccountService.updatePasswordAccount(password.oldPassword, password.password);
@@ -105,6 +107,7 @@ export function Profile() {
             }
         }
         setDisableButton(false);
+        setLoad(false);
     }
 
     return(
@@ -117,7 +120,7 @@ export function Profile() {
             />
         )}
 
-
+        {load && <ScreamLoading/>}
         <div className="flex h-screen bg-gray-100">
             <Sidebar levelAccount={login.level} selected={6}/>
             {/* Main Content */}
@@ -139,14 +142,24 @@ export function Profile() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">NOME:</label>
                         <input 
                         value={login.name}
-                        disabled={!editName}
+                        disabled={true}
                         placeholder="Nome"
-                        className={`border border-gray-500 rounded-md px-3 py-2 w-full`}
+                        className={`${editName && 'hidden'} border border-gray-500 rounded-md px-3 py-2 w-full`}
+                        onChange={(e) => setLogin(prev => ({...prev, name:e.target.value}))}
+                        />
+                        <input 
+                        value={name}
+                        disabled={false}
+                        placeholder="Nome"
+                        className={`${!editName && 'hidden'} border border-gray-500 rounded-md px-3 py-2 w-full`}
                         onChange={(e) => setName(e.target.value)}
                         />
-                        <button onClick={() => setEditName(true)} 
+                        <button onClick={() => {
+                            setName(login.name);
+                            setEditName(true);
+                        }} 
                             type="button" 
-                            className={`${editName && "hidden"} absolute left-[97%] top-[50%] p-1 text-gray-600 hover:text-blue-600`}>
+                            className={`${editName && "hidden"} absolute right-2 top-[50%] p-1 text-gray-600 hover:text-blue-600`}>
                             <Edit2 size={20} />
                         </button>
                     </div>

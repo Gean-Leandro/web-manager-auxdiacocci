@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { EimeriaService, eimeriaProps } from "../../services/eimeriaService";
 import { AccountService } from "../../services/accountService";
@@ -20,7 +20,6 @@ export function Eimerias(){
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    const [filtradas, setFiltradas] = useState<eimeriaProps[]>([]);
     const [busca, setBusca] = useState('');
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [idDelet, setIdDelet] = useState<eimeriaProps | null>();
@@ -32,7 +31,6 @@ export function Eimerias(){
             const query = await EimeriaService.getEimerias();
             if (query.status === "OK") {
                 setEimerias(query.result);
-                setFiltradas(query.result);
             } else {
                 setShowNotification({
                     active: true, 
@@ -56,15 +54,14 @@ export function Eimerias(){
     }, []);
 
     const handleBuscar = () => {
-        if (busca.trim() === ''){
-            setFiltradas(eimerias);
-        } else {    
-            const resultado = eimerias.filter((eimeria) =>
-                eimeria.name.toLowerCase().includes(busca.toLowerCase())
-            );
-            setFiltradas(resultado);
-        }
+        filtradas
     };
+
+    const filtradas = useMemo(() => {
+        return eimerias
+          .filter(item => item.name.toLowerCase().includes(busca.toLowerCase()))
+          .sort((a, b) => a.name.localeCompare(b.name));
+    }, [eimerias, busca]);
 
     const deleteEspecie = async () =>{
         try {
