@@ -6,8 +6,9 @@ export interface IReference {
     id:string,
     title: string,
     tipoReferencia: string,
-    ano: string,
-    autor?: string,
+    autor: string,
+    ano?: string,
+    titlePeriodic?: string,
     volume?: string,
     numero?: string,
     paginas?: string,
@@ -35,115 +36,80 @@ export const ReferencesService = {
 
     async addNew(data:IReference) {
         try {
-            let referenceRef = null
-            let id = ''
 
-            if (data.tipoReferencia === 'artigo' && data.autor && data.local && data.mes && data.volume && data.numero) {
-
-                if (data.doi){
-                    referenceRef = await addDoc(collection(db, "reference"), {
-                        title: data.title.trim(),
-                        tipoReferencia: data.tipoReferencia.trim(),
-                        autor: data.autor.trim(),
-                        ano: data.ano.trim(),
-                        local: data.local.trim(),
-                        mes: data.mes.trim(),
-                        volume: data.volume.trim(),
-                        numero: data.numero.trim(),
-                        doi: data.doi.trim(),
-                    });
-
-                } else {
-                    referenceRef = await addDoc(collection(db, "reference"), {
-                        title: data.title.trim(),
-                        tipoReferencia: data.tipoReferencia.trim(),
-                        autor: data.autor.trim(),
-                        ano: data.ano.trim(),
-                        local: data.local.trim(),
-                        mes: data.mes.trim(),
-                        volume: data.volume.trim(),
-                        numero: data.numero.trim(),
-                    });
-                }
-
-                id = referenceRef.id;
-
-                await updateDoc(referenceRef, {
-                    id: id
-                });
-            } else if (data.tipoReferencia === 'pdf' && data.autor && data.url && data.local && data.mes && data.volume && data.numero) {
                 
-                if (data.doi){
-                    
-                    referenceRef = await addDoc(collection(db, "reference"), {
-                        title: data.title.trim(),
-                        tipoReferencia: data.tipoReferencia.trim(),
-                        autor: data.autor.trim(),
-                        ano: data.ano.trim(),
-                        local: data.local.trim(),
-                        mes: data.mes.trim(),
-                        volume: data.volume.trim(),
-                        numero: data.numero.trim(),
-                        doi: data.doi.trim(),
-                        url: data.url.trim(),
-                    });
+            const referenceRef = await addDoc(collection(db, "reference"), {
+                title: data.title.trim(),
+                tipoReferencia: data.tipoReferencia.trim(),
+                autor: data.autor.trim()
+            });
 
-                } else {
-                    referenceRef = await addDoc(collection(db, "reference"), {
-                        title: data.title.trim(),
-                        tipoReferencia: data.tipoReferencia.trim(),
-                        autor: data.autor.trim(),
-                        ano: data.ano.trim(),
-                        local: data.local.trim(),
-                        mes: data.mes.trim(),
-                        volume: data.volume.trim(),
-                        numero: data.numero.trim(),
-                        url: data.url.trim(),
-                    });
-                }
-
-                id = referenceRef.id;
-
+            if (data.titlePeriodic){
                 await updateDoc(referenceRef, {
-                    id: id
+                    titlePeriodic: data.titlePeriodic
                 });
-            } else if (data.tipoReferencia === 'livro' && data.autor && data.edicao && data.local && data.mes && data.editora && data.paginas) {
-                referenceRef = await addDoc(collection(db, "reference"), {
-                    title: data.title.trim(),
-                    tipoReferencia: data.tipoReferencia.trim(),
-                    autor: data.autor.trim(),
-                    ano: data.ano.trim(),
-                    local: data.local.trim(),
-                    mes: data.mes.trim(),
-                    edicao: data.edicao.trim(),
-                    editora: data.editora.trim(),
-                    paginas: data.paginas.trim(),
-                });
-
-                id = referenceRef.id;
-
+            } 
+            if (data.ano){
                 await updateDoc(referenceRef, {
-                    id: id
+                    ano: data.ano
                 });
-            } else if (data.tipoReferencia === 'site' && data.autor && data.local && data.mes && data.url && data.tituloSite) {
-                referenceRef = await addDoc(collection(db, "reference"), {
-                    title: data.title.trim(),
-                    tipoReferencia: data.tipoReferencia.trim(),
-                    autor: data.autor.trim(),
-                    ano: data.ano.trim(),
-                    url: data.url.trim(),
-                    mes: data.mes.trim(),
-                    tituloSite: data.tituloSite.trim(),
-                });
-                id = referenceRef.id;
-
+            } 
+            if (data.paginas){
                 await updateDoc(referenceRef, {
-                    id: id
+                    paginas: data.paginas
                 });
-            } else {
-                throw "Campos inválidos"
-            }
+            } 
+            if (data.volume){
+                await updateDoc(referenceRef, {
+                    volume: data.volume
+                });
+            } 
+            if (data.numero){
+                await updateDoc(referenceRef, {
+                    numero: data.numero
+                });
+            } 
+            if (data.mes){
+                await updateDoc(referenceRef, {
+                    mes: data.mes
+                });
+            } 
+            if (data.doi){
+                await updateDoc(referenceRef, {
+                    doi: data.doi
+                });
+            } 
+            if (data.edicao){
+                await updateDoc(referenceRef, {
+                    edicao: data.edicao
+                });
+            } 
+            if (data.editora){
+                await updateDoc(referenceRef, {
+                    editora: data.editora
+                });
+            } 
+            if (data.local){
+                await updateDoc(referenceRef, {
+                    local: data.local
+                });
+            } 
+            if (data.tituloSite){
+                await updateDoc(referenceRef, {
+                    tituloSite: data.tituloSite
+                });
+            } 
+            if (data.url){
+                await updateDoc(referenceRef, {
+                    url: data.url
+                });
+            } 
 
+            const id = referenceRef.id;
+
+            await updateDoc(referenceRef, {
+                id: id
+            });
 
             const uid = auth.currentUser?.uid;
             
@@ -166,87 +132,72 @@ export const ReferencesService = {
 
     async update(data:IReference) {
         try {
-            if (data.tipoReferencia === 'artigo' && data.autor && data.local && data.mes && data.volume && data.numero) {
-                if (data.doi) {
-                    await updateDoc(doc(db, 'reference', data.id), {
-                        title: data.title.trim(),
-                        tipoReferencia: data.tipoReferencia.trim(),
-                        autor: data.autor.trim(),
-                        ano: data.ano.trim(),
-                        local: data.local.trim(),
-                        mes: data.mes.trim(),
-                        volume: data.volume.trim(),
-                        numero: data.numero.trim(),
-                        doi: data.doi.trim(),
-                    });
-                } else {
-                    await updateDoc(doc(db, 'reference', data.id), {
-                        title: data.title.trim(),
-                        tipoReferencia: data.tipoReferencia.trim(),
-                        autor: data.autor.trim(),
-                        ano: data.ano.trim(),
-                        local: data.local.trim(),
-                        mes: data.mes.trim(),
-                        volume: data.volume.trim(),
-                        numero: data.numero.trim()
-                    });
-                }
-                
-
-            } else if (data.tipoReferencia === 'pdf' && data.autor && data.url && data.local && data.mes && data.volume && data.numero) {
-                if (data.doi) {
-                    await updateDoc(doc(db, 'reference', data.id), {
-                        title: data.title.trim(),
-                        tipoReferencia: data.tipoReferencia.trim(),
-                        autor: data.autor.trim(),
-                        ano: data.ano.trim(),
-                        local: data.local.trim(),
-                        mes: data.mes.trim(),
-                        volume: data.volume.trim(),
-                        numero: data.numero.trim(),
-                        doi: data.doi.trim(),
-                        url: data.url.trim(),
-                    });
-                }  else {
-                    await updateDoc(doc(db, 'reference', data.id), {
-                        title: data.title.trim(),
-                        tipoReferencia: data.tipoReferencia.trim(),
-                        autor: data.autor.trim(),
-                        ano: data.ano.trim(),
-                        local: data.local.trim(),
-                        mes: data.mes.trim(),
-                        volume: data.volume.trim(),
-                        numero: data.numero.trim(),
-                        url: data.url.trim(),
-                    });
-                }
-
-            } else if (data.tipoReferencia === 'livro' && data.autor && data.edicao && data.local && data.mes && data.editora && data.paginas) {
+            await updateDoc(doc(db, 'reference', data.id), {
+                title: data.title.trim(),
+                tipoReferencia: data.tipoReferencia.trim(),
+                autor: data.autor.trim()
+            });
+        
+            if (data.titlePeriodic){
                 await updateDoc(doc(db, 'reference', data.id), {
-                    title: data.title.trim(),
-                    tipoReferencia: data.tipoReferencia.trim(),
-                    autor: data.autor.trim(),
-                    ano: data.ano.trim(),
-                    local: data.local.trim(),
-                    mes: data.mes.trim(),
-                    edicao: data.edicao.trim(),
-                    editora: data.editora.trim(),
-                    paginas: data.paginas.trim(),
+                    titlePeriodic: data.titlePeriodic
                 });
-
-            } else if (data.tipoReferencia === 'site' && data.autor && data.local && data.mes && data.url && data.tituloSite) {
+            } 
+            if (data.ano){
                 await updateDoc(doc(db, 'reference', data.id), {
-                    title: data.title.trim(),
-                    tipoReferencia: data.tipoReferencia.trim(),
-                    autor: data.autor.trim(),
-                    ano: data.ano.trim(),
-                    url: data.url.trim(),
-                    mes: data.mes.trim(),
-                    tituloSite: data.tituloSite.trim(),
+                    ano: data.ano
                 });
-            } else {
-                throw "Campos inválidos"
-            }
+            } 
+            if (data.paginas){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    paginas: data.paginas
+                });
+            } 
+            if (data.volume){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    volume: data.volume
+                });
+            } 
+            if (data.numero){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    numero: data.numero
+                });
+            } 
+            if (data.mes){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    mes: data.mes
+                });
+            } 
+            if (data.doi){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    doi: data.doi
+                });
+            } 
+            if (data.edicao){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    edicao: data.edicao
+                });
+            } 
+            if (data.editora){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    editora: data.editora
+                });
+            } 
+            if (data.local){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    local: data.local
+                });
+            } 
+            if (data.tituloSite){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    tituloSite: data.tituloSite
+                });
+            } 
+            if (data.url){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    url: data.url
+                });
+            } 
 
             const uid = auth.currentUser?.uid;
             

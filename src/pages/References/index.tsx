@@ -6,12 +6,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { AccountService } from "../../services/accountService";
 import { Check, Edit2, Eye, FileText, Plus, Trash2, X } from "lucide-react";
+import { ScreamLoading } from "../../components/ScreamLoading";
 
 export function References() {
     const [references, setReferences] = useState<IReference[]>([]);
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
+    const [load, setLoad] = useState<boolean>(false);
     const [busca, setBusca] = useState<string>('');
     const [fieldBusca, setFieldBusca] = useState<boolean>(true);
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
@@ -20,13 +22,13 @@ export function References() {
         id:'',
         title: '',
         tipoReferencia: '',
-        ano: ''
+        autor: ''
     });
     const [referenceItem, setReferenceItem] = useState<IReference>({
         id:'',
         title: '',
         tipoReferencia: '',
-        ano: ''
+        autor: ''
     });
     const [idDelet, setIdDelet] = useState<IReference | null>(null);
     const [editReference, setEditReference] = useState<boolean>(false);
@@ -35,7 +37,7 @@ export function References() {
 
     
     const resetForm = () => {
-        setReferenceItem({id: '', title: '', ano: '', tipoReferencia: ''})
+        setReferenceItem({id: '', title: '', tipoReferencia: '', autor: ''})
     };
     
 
@@ -77,71 +79,10 @@ export function References() {
     }, [references, busca]);
 
     const validateFields = () => {
-        switch (referenceItem.tipoReferencia) {
-            case "artigo":
-                if (referenceItem.title !== '' && referenceItem.autor 
-                    && referenceItem.ano !== '' && referenceItem.local 
-                    && referenceItem.mes && referenceItem.volume 
-                    && referenceItem.numero) {
-
-                    if (referenceItem.autor !== '' && referenceItem.local !== '' 
-                        && referenceItem.mes !== '' && referenceItem.volume !== '' 
-                        && referenceItem.numero !== '') {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            case "livro":
-                if (referenceItem.title !== '' && referenceItem.autor
-                    && referenceItem.ano !== '' && referenceItem.mes 
-                    && referenceItem.edicao && referenceItem.editora 
-                    && referenceItem.local && referenceItem.paginas) {
-
-                    if (referenceItem.autor !== '' && referenceItem.local !== '' 
-                        && referenceItem.mes !== '' && referenceItem.edicao !== '' 
-                        && referenceItem.editora !== ''  && referenceItem.paginas !== '') {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            case "pdf":
-                if (referenceItem.title !== '' && referenceItem.autor  
-                    && referenceItem.local  && referenceItem.mes  
-                    && referenceItem.volume  && referenceItem.numero  
-                    && referenceItem.ano !== '' 
-                    && referenceItem.url) {
-
-                    if (referenceItem.autor !== '' && referenceItem.local !== '' 
-                        && referenceItem.mes !== '' && referenceItem.volume !== '' 
-                        && referenceItem.numero !== '' && referenceItem.url) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                    
-                } else {
-                    return false;
-                }
-            case "site":
-                if (referenceItem.title !== '' && referenceItem.autor 
-                    && referenceItem.mes && referenceItem.url 
-                    && referenceItem.ano !== '' && referenceItem.tituloSite) {
-
-                    if (referenceItem.autor !== '' && referenceItem.mes !== '' 
-                        && referenceItem.tituloSite !== '' && referenceItem.url) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
+        if (referenceItem.title !== '' && referenceItem.autor !== "" && referenceItem.tipoReferencia !== ""){
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -160,19 +101,20 @@ export function References() {
     }
 
     const addNewReference = async () => {
+        setLoad(true);
         if (validateFields()) {
-
+            
             const titleExist = references.some(
                 (item) => item.title.trim().toLowerCase() === referenceItem.title.trim().toLowerCase()
             )
-
+            
             if (!titleExist) {
                 try {
                     await ReferencesService.addNew(referenceItem);
                     resetForm();
-    
+                    
                     updateReferenceList();
-    
+                    
                     setShowNotification({
                         active: true, 
                         mensage: "Nova referência adicionada", 
@@ -200,16 +142,17 @@ export function References() {
             })
         }
         
+        setLoad(false);
     }
 
     const updateReference = async () => {
         setDisableButton(true);
-
+        setLoad(true);
         if (validateFields()) {
             try {
-
+                
                 await ReferencesService.update(referenceItem);
-                setReferenceItem({id:'', title:'', ano:'', tipoReferencia: ''});
+                setReferenceItem({id:'', title:'', tipoReferencia: '', autor: '',});
                 setEditReference(false);
                 
                 updateReferenceList();
@@ -221,7 +164,7 @@ export function References() {
                     bgColor: "bg-green-600"
                 })
             } catch (error) {
-
+                
                 setShowNotification({
                     active: true, 
                     mensage: "Error: " + error, 
@@ -236,6 +179,7 @@ export function References() {
             })
         }
         setDisableButton(false);
+        setLoad(false);
     }
     
     const deleteReference = async () => {
@@ -270,7 +214,8 @@ export function References() {
             onClose={() => setShowNotification({active: false, mensage:"", bgColor:""})}
             />
         )}
-
+        {load && <ScreamLoading/>}
+        
         <div className="flex h-screen bg-gray-100">
             <Sidebar levelAccount={login} selected={5}/>
             <div className="flex-grow overflow-auto">
@@ -323,9 +268,15 @@ export function References() {
                                 {viewReferenceItem.tipoReferencia === "artigo" && (
                                     <div className="space-y-4">
                                     <div>
-                                        <label className="block text-gray-700 mb-2">TÍTULO DO ARTIGO:</label>
+                                        <label className="block text-gray-700 mb-2">TÍTULO:</label>
                                         <input type="text" className="w-full border border-gray-500 rounded p-2" 
                                                 value={viewReferenceItem.title}
+                                                disabled={true}/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO PERIÓDICO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={viewReferenceItem.titlePeriodic}
                                                 disabled={true}/>
                                     </div>
                                     <div>
@@ -336,9 +287,9 @@ export function References() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
+                                        <label className="block text-gray-700 mb-2">PÁGINAS:</label>
                                         <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
-                                                value={viewReferenceItem.local}
+                                                value={viewReferenceItem.paginas}
                                                 disabled={true}/>
                                         </div>
                                         <div>
@@ -631,10 +582,16 @@ export function References() {
                                 {referenceItem.tipoReferencia === "artigo" && (
                                     <div className="space-y-4">
                                     <div>
-                                        <label className="block text-gray-700 mb-2">TÍTULO DO ARTIGO:</label>
+                                        <label className="block text-gray-700 mb-2">TÍTULO:</label>
                                         <input type="text" className="w-full border border-gray-500 rounded p-2" 
                                                 value={referenceItem.title}
                                                 onChange={(e) => setReferenceItem((prev) => ({ ...prev, title:e.target.value}))}/>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 mb-2">TÍTULO PERIÓDICO:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                value={referenceItem.titlePeriodic}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, titlePeriodic:e.target.value}))}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
@@ -644,10 +601,10 @@ export function References() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                        <label className="block text-gray-700 mb-2">LOCAL:</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
-                                                value={referenceItem.local}
-                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, local:e.target.value}))}/>
+                                        <label className="block text-gray-700 mb-2">PÁGINAS:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="" 
+                                                value={referenceItem.paginas}
+                                                onChange={(e) => setReferenceItem((prev) => ({ ...prev, paginas:e.target.value}))}/>
                                         </div>
                                         <div>
                                         <label className="block text-gray-700 mb-2">MÊS:</label>
