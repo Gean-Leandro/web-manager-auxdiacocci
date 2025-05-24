@@ -30,7 +30,6 @@ export default function Dashboard() {
                 const uid = user.uid;
                 const query = await AccountService.getAccount(uid);
                 setLogin(query);
-                console.log(query);
             } 
         })
         return () => {
@@ -124,9 +123,9 @@ export default function Dashboard() {
                     </div>
                     
                     <div className='border-t flex w-[100%] items-center py-2 border-b hover:bg-gray-50'>
-                        <p className='border-x w-[40%] flex justify-center items-center font-bold'>Tipo</p>
-                        <p className='border-x w-[30%] flex justify-center items-center font-bold'>Item</p>
-                        <p className='border-x w-[20%] flex justify-center items-center font-bold'>Entidade</p>
+                        <p className='border-x w-[37.5%] flex justify-center items-center font-bold'>Tipo</p>
+                        <p className='border-x w-[28.5%] flex justify-center items-center font-bold'>Item</p>
+                        <p className='border-x w-[18.5%] flex justify-center items-center font-bold'>Entidade</p>
                         <p className='border-x w-[20%] flex justify-center items-center font-bold'>Data/Hora</p>
                     </div>
                     {/* Área vazia com ícone */}
@@ -146,18 +145,18 @@ export default function Dashboard() {
                             <>
                                 {login?.historic && login.historic.map((item, index) => (
                                     <div key={index} 
-                                        className="flex w-[100%] items-center justify-between h-[40px] border-b hover:bg-gray-50">
+                                        className="flex w-[100%] items-center justify-between border-b hover:bg-gray-50">
                                         
-                                        <p className='border-x w-[40%] flex justify-center break-words items-center'>
+                                        <p className='border-x w-[40%] p-2 flex h-[100%] justify-center break-words items-center'>
                                             {item.action}
                                         </p>
-                                        <p className='border-x w-[30%] flex justify-center break-words items-center'>
+                                        <p className='w-[30%] flex h-[100%] p-2 justify-center break-words items-center'>
                                             {item.name}
                                         </p>
-                                        <p className='border-x w-[20%] flex justify-center break-words items-center'>
+                                        <p className='border-l w-[20%] flex h-[100%] p-2 justify-center break-words items-center'>
                                             {item.entity}
                                         </p>
-                                        <p className='border-x w-[20%] flex justify-center break-words items-center'>
+                                        <p className='border-x w-[20%] flex h-[100%] p-2 justify-center break-words items-center'>
                                             {item.timestamp.toDate().toLocaleString()}
                                         </p>
                                     </div>

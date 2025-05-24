@@ -1,8 +1,16 @@
 import { createUserWithEmailAndPassword, EmailAuthProvider, getAuth, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, updatePassword  } from "firebase/auth";
-import { collection, doc, getDoc, getDocs, setDoc, Timestamp, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, setDoc, Timestamp, updateDoc, getFirestore, query, where, orderBy } from "firebase/firestore";
 import { auth, db } from '../../firebaseConfig';
 
 
+export interface Ihistoric {
+    uid:string,
+    id: string,
+    name: string, 
+    action: string, 
+    entity: string, 
+    timestamp: Timestamp
+}
 
 export interface IAccount {
     uid: string,
@@ -10,13 +18,7 @@ export interface IAccount {
     email: string,
     level: string,
     active: boolean,
-    historic: [{
-        id: string,
-        name: string, 
-        action: string, 
-        entity: string, 
-        timestamp: Timestamp
-    }] | []
+    historic: Ihistoric[]
 }
 
 export const AccountService = {
@@ -90,6 +92,9 @@ export const AccountService = {
         try {
             const docRef = doc(db, 'accounts', uid); // Supondo que o doc tem o UID como ID
             const docSnap = await getDoc(docRef);
+            
+            const historic = await this.getHistoric(uid);
+
             if (docSnap.exists()) {
                 return {
                     uid: docSnap.data().uid, 
@@ -97,7 +102,7 @@ export const AccountService = {
                     email: docSnap.data().email,
                     level: docSnap.data().level,
                     active: docSnap.data().active,
-                    historic: docSnap.data().historic
+                    historic: historic
                 };
             } else {
                 throw "Usuário não encontrado na coleção accounts.";
@@ -105,6 +110,31 @@ export const AccountService = {
         } catch (error) {
             throw error;
         }
+    },
+
+    async getHistoric(uid: string): Promise<Ihistoric[]> {
+        const dbStore = getFirestore();
+        const historicoRef = collection(dbStore, 'historic');
+
+        const historicoQuery = query(historicoRef, where('uid', '==', uid), orderBy('timestamp', 'desc'));
+
+        const snapshot = await getDocs(historicoQuery);
+
+        const historico: Ihistoric[] = snapshot.docs.map(doc => {
+            const data = doc.data();
+
+            return {
+            id: doc.id,
+            uid: data.uid,
+            name: data.name,
+            action: data.action,
+            entity: data.entity,
+            timestamp: data.timestamp as Timestamp,
+            };
+        });
+
+        return historico;
+
     },
 
     async redefinientPassword(email:string) {
@@ -154,22 +184,20 @@ export const AccountService = {
     },
     
     async updateActivity(data:{ uid: string, id: string, name: string, action: string, entity: string, timestamp: Timestamp }) {
-        const docRef = doc(db, 'accounts', data.uid);
-
         try {
-
-            const account = await this.getAccount(data.uid);
             
-            const newHistoric = [{
+            const referenceRef = await addDoc(collection(db, "historic"), {
+                uid: data.uid,
                 id: data.id,
                 name: data.name,
                 action: data.action,
                 entity: data.entity,
                 timestamp: data.timestamp
-            }, ...(account.historic || [])];
+            });
+            const id = referenceRef.id
 
-            await updateDoc(docRef, {
-                historic: newHistoric
+            await updateDoc(referenceRef, {
+                id: id
             });
           } catch (error) {
             throw error

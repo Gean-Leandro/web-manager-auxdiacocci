@@ -6,8 +6,11 @@ export interface IReference {
     id:string,
     title: string,
     tipoReferencia: string,
-    autor: string,
+    autor?: string,
     ano?: string,
+    instituicao?: string,
+    organizador?: string,
+    titleCapitulo?: string,
     titlePeriodic?: string,
     volume?: string,
     numero?: string,
@@ -40,10 +43,19 @@ export const ReferencesService = {
                 
             const referenceRef = await addDoc(collection(db, "reference"), {
                 title: data.title.trim(),
-                tipoReferencia: data.tipoReferencia.trim(),
-                autor: data.autor.trim()
+                tipoReferencia: data.tipoReferencia.trim()
             });
 
+            if (data.autor){
+                await updateDoc(referenceRef, {
+                    autor: data.autor
+                });
+            } 
+            if (data.instituicao){
+                await updateDoc(referenceRef, {
+                    instituicao: data.instituicao
+                });
+            } 
             if (data.titlePeriodic){
                 await updateDoc(referenceRef, {
                     titlePeriodic: data.titlePeriodic
@@ -102,6 +114,16 @@ export const ReferencesService = {
             if (data.url){
                 await updateDoc(referenceRef, {
                     url: data.url
+                });
+            } 
+            if (data.titleCapitulo){
+                await updateDoc(referenceRef, {
+                    titleCapitulo: data.titleCapitulo
+                });
+            } 
+            if (data.organizador){
+                await updateDoc(referenceRef, {
+                    organizador: data.organizador
                 });
             } 
 
@@ -134,10 +156,19 @@ export const ReferencesService = {
         try {
             await updateDoc(doc(db, 'reference', data.id), {
                 title: data.title.trim(),
-                tipoReferencia: data.tipoReferencia.trim(),
-                autor: data.autor.trim()
+                tipoReferencia: data.tipoReferencia.trim()
             });
         
+            if (data.autor){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    autor: data.autor
+                });
+            } 
+            if (data.instituicao){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    instituicao: data.instituicao
+                });
+            } 
             if (data.titlePeriodic){
                 await updateDoc(doc(db, 'reference', data.id), {
                     titlePeriodic: data.titlePeriodic
@@ -196,6 +227,16 @@ export const ReferencesService = {
             if (data.url){
                 await updateDoc(doc(db, 'reference', data.id), {
                     url: data.url
+                });
+            } 
+            if (data.titleCapitulo){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    titleCapitulo: data.titleCapitulo
+                });
+            } 
+            if (data.organizador){
+                await updateDoc(doc(db, 'reference', data.id), {
+                    organizador: data.organizador
                 });
             } 
 
