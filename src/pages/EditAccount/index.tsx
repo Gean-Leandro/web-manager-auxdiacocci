@@ -89,7 +89,6 @@ export function EditAccount() {
                 });
                 navigate('/contas');
             } catch (error) {
-                setConfirmModal(false);
                 setShowNotification({
                     active: true, 
                     mensage: "Error: " + error, 
@@ -97,6 +96,7 @@ export function EditAccount() {
                 });
             }
         }
+        setConfirmModal(false);
         setDisableButton(false);
         setLoad(false);
     }
