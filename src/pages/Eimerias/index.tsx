@@ -14,6 +14,7 @@ import {
     Edit2,
     Egg
   } from 'lucide-react';
+import { ScreamLoading } from "../../components/ScreamLoading";
 
 export function Eimerias(){
     const [eimerias, setEimerias] = useState<eimeriaProps[]>([]);
@@ -24,6 +25,7 @@ export function Eimerias(){
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [idDelet, setIdDelet] = useState<eimeriaProps | null>();
     const [login, setLogin] = useState<string>("");
+    const [load, setLoad] = useState<boolean>(false);
     
     useEffect(() => {
         document.title = "Cadastros de Eimerias";
@@ -64,9 +66,21 @@ export function Eimerias(){
     }, [eimerias, busca]);
 
     const deleteEspecie = async () =>{
+        setLoad(true);
         try {
             if (idDelet) {
                 await EimeriaService.delete(idDelet.id, idDelet.name);
+                const query = await EimeriaService.getEimerias();
+                if (query.status === "OK") {
+                    setEimerias(query.result);
+                } else {
+                    setShowNotification({
+                        active: true, 
+                        mensage: query.status, 
+                        bgColor: "bg-orange-500"
+                    })
+                }
+                setConfirmModal(false);
             }
             setShowNotification({
                 active: true,
@@ -80,6 +94,7 @@ export function Eimerias(){
                 bgColor: "bg-orange-500",
             });
         }
+        setLoad(false);
     }
     
     return(
@@ -91,7 +106,7 @@ export function Eimerias(){
             onClose={() => setShowNotification({active: false, mensage:"", bgColor:""})}
             />
         )}
-
+        {load && <ScreamLoading/>}
         <div className="flex h-screen bg-gray-100">
             <Sidebar levelAccount={login} selected={2}/>
             <div className="flex-grow overflow-auto">
@@ -215,7 +230,7 @@ export function Eimerias(){
 
 
                     
-                    <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[20%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => setConfirmModal(false)} 
                             className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
                             CANCELAR

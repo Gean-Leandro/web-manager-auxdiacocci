@@ -4,6 +4,7 @@ import { auth } from '../../../firebaseConfig';
 import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { Notification } from '../../components/Notification';
 import { AccountService } from '../../services/accountService';
+import { ScreamLoading } from '../../components/ScreamLoading';
 
 export function Login() {
   useEffect(() => {
@@ -20,8 +21,10 @@ export function Login() {
   const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
     {active:false, mensage:"", bgColor:""}
   );
+  const [load, setLoad] = useState<boolean>(false);
 
   const handleLogin = async () => {
+    setLoad(true);
     try {
       if (email !== "" && password !== ""){
         await signInWithEmailAndPassword(auth, email, password);
@@ -57,6 +60,7 @@ export function Login() {
         bgColor: "bg-orange-500"
       })
     }
+    setLoad(false);
   };
 
   const forgotpassword = async () => {
@@ -65,7 +69,7 @@ export function Login() {
       setSendEmail('');
       setForgotPasswordModal(false);
     } catch (error) {
-
+      console.log(error);
     }
   }
 
@@ -78,7 +82,7 @@ export function Login() {
       onClose={() => setShowNotification({active: false, mensage:"", bgColor:""})}
       />
     )}
-
+    {load && <ScreamLoading />}
 <div className="flex h-screen w-full">
       {/* Área azul escura à esquerda */}
       <div className="bg-white flex items-center justify-center w-2/3">
@@ -237,7 +241,7 @@ export function Login() {
 
 
               
-              <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
+              <div className="h-[20%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
                   <button onClick={() => setForgotPasswordModal(false)} 
                       className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
                       CANCELAR

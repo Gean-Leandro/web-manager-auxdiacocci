@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { GlossaryService, Iglossary} from "../../services/glossaryService";
@@ -6,7 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { AccountService } from "../../services/accountService";
 import { BookOpen, Check, Edit2, Eye, Plus, Trash2, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ScreamLoading } from "../../components/ScreamLoading";
 
 export function Glossary() {
     const [glossary, setGlossary] = useState<Iglossary[]>([]);
@@ -23,6 +23,8 @@ export function Glossary() {
     const [editGlossary, setEditGlossary] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [login, setLogin] = useState<string>("");
+    const [load, setLoad] = useState<boolean>(false);
+    const divRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         document.title = "Glossario";
@@ -55,6 +57,15 @@ export function Glossary() {
         filtradas
     };
 
+    const scrollToTop = () => {
+        if (divRef.current) {
+        divRef.current.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+        }
+    };
+
     const filtradas = useMemo(() => {
         return glossary
           .filter(item => item.word.toLowerCase().includes(busca.toLowerCase()))
@@ -76,6 +87,7 @@ export function Glossary() {
     }
 
     const addNewGossary = async () => {
+        setLoad(true);
         if (!(glossaryItem.word === "") || !(glossaryItem.meaning === "")) {
 
             const wordExist = glossary.some(
@@ -115,11 +127,12 @@ export function Glossary() {
                 bgColor: "bg-orange-500"
             })
         }
-        
+        setLoad(false);
     }
 
     const updateGlossary = async () => {
         setDisableButton(true);
+        setLoad(true);
         if (!(glossaryItem.word === "") || !(glossaryItem.meaning === "")){
 
             try {
@@ -162,9 +175,11 @@ export function Glossary() {
             })
         }
         setDisableButton(false);
+        setLoad(false);
     }
     
     const deleteWord = async () => {
+        setLoad(true);
         try {
             if(idDelet){
                 await GlossaryService.delete(idDelet.id, idDelet.word);
@@ -184,6 +199,7 @@ export function Glossary() {
             })
             setConfirmModal(false);
         }
+        setLoad(false);
     }
 
 
@@ -196,10 +212,10 @@ export function Glossary() {
             onClose={() => setShowNotification({active: false, mensage:"", bgColor:""})}
             />
         )}
-
+        {load && <ScreamLoading />}
         <div className="flex h-screen bg-gray-100">
             <Sidebar levelAccount={login} selected={3}/>
-            <div className="flex-grow overflow-auto">
+            <div ref={divRef} className="flex-grow overflow-auto">
                 {/* Header */}
                 <div className="flex items-center p-6">
                     <div className="p-2">
@@ -346,6 +362,7 @@ export function Glossary() {
                                     onClick={() => {
                                         setViewGlossaryItem(word);
                                         setOpenView(true);
+                                        scrollToTop();
                                     }}
                                     className="p-1 text-gray-600 hover:text-blue-600">
                                     <Eye size={18} />
@@ -423,7 +440,7 @@ export function Glossary() {
 
 
                     
-                    <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[20%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => {
                                 setConfirmModal(false);
                                 setIdDelet(null);

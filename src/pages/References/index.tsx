@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { ReferencesService, IReference } from "../../services/referencesService";
@@ -21,20 +21,18 @@ export function References() {
     const [viewReferenceItem, setViewReferenceItem] = useState<IReference>({
         id:'',
         title: '',
-        tipoReferencia: '',
-        autor: ''
+        tipoReferencia: ''
     });
     const [referenceItem, setReferenceItem] = useState<IReference>({
         id:'',
         title: '',
-        tipoReferencia: '',
-        autor: ''
+        tipoReferencia: ''
     });
     const [idDelet, setIdDelet] = useState<IReference | null>(null);
     const [editReference, setEditReference] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [login, setLogin] = useState<string>("");
-
+    const divRef = useRef<HTMLDivElement>(null);
     
     const resetForm = () => {
         setReferenceItem({id: '', title: '', tipoReferencia: '', autor: ''})
@@ -72,6 +70,16 @@ export function References() {
         filtradas
     };
 
+
+    const scrollToTop = () => {
+        if (divRef.current) {
+        divRef.current.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+        }
+    };
+
     const filtradas = useMemo(() => {
         return references
           .filter(item => item.title.toLowerCase().includes(busca.toLowerCase()))
@@ -79,7 +87,7 @@ export function References() {
     }, [references, busca]);
 
     const validateFields = () => {
-        if (referenceItem.title !== '' && referenceItem.autor !== "" && referenceItem.tipoReferencia !== ""){
+        if (referenceItem.title !== '' && referenceItem.tipoReferencia !== ""){
             return true;
         } else {
             return false;
@@ -102,7 +110,7 @@ export function References() {
 
     const addNewReference = async () => {
         setLoad(true);
-        if (true) {
+        if (validateFields()) {
             
             const titleExist = references.some(
                 (item) => item.title.trim().toLowerCase() === referenceItem.title.trim().toLowerCase()
@@ -110,7 +118,72 @@ export function References() {
             
             if (!titleExist) {
                 try {
-                    await ReferencesService.addNew(referenceItem);
+                    if (referenceItem.tipoReferencia === "artigo") {
+                        const newReference:IReference = {
+                            id: '',
+                            title: referenceItem.title,
+                            tipoReferencia: referenceItem.tipoReferencia,
+                            ...(referenceItem?.titlePeriodic != null && { titlePeriodic: referenceItem.titlePeriodic }),
+                            ...(referenceItem?.autor != null && { autor: referenceItem.autor }),
+                            ...(referenceItem?.paginas != null && { paginas: referenceItem.paginas }),
+                            ...(referenceItem?.mes != null && { mes: referenceItem.mes }),
+                            ...(referenceItem?.volume != null && { volume: referenceItem.volume }),
+                            ...(referenceItem?.numero != null && { numero: referenceItem.numero }),
+                            ...(referenceItem?.ano != null && { ano: referenceItem.ano }),
+                            ...(referenceItem?.doi != null && { doi: referenceItem.doi }),
+                            ...(referenceItem?.url != null && { url: referenceItem.url }),
+                        }
+                        await ReferencesService.addNew(newReference);
+
+                    } else if (referenceItem.tipoReferencia === "livro") {
+                        const newReference:IReference = {
+                            id: '',
+                            title: referenceItem.title,
+                            tipoReferencia: referenceItem.tipoReferencia,
+                            ...(referenceItem?.autor != null && { autor: referenceItem.autor }),
+                            ...(referenceItem?.paginas != null && { paginas: referenceItem.paginas }),
+                            ...(referenceItem?.mes != null && { mes: referenceItem.mes }),
+                            ...(referenceItem?.edicao != null && { edicao: referenceItem.edicao }),
+                            ...(referenceItem?.editora != null && { editora: referenceItem.editora }),
+                            ...(referenceItem?.ano != null && { ano: referenceItem.ano }),
+                            ...(referenceItem?.local != null && { local: referenceItem.local })
+                        }
+                        await ReferencesService.addNew(newReference);
+                        
+                    } else if (referenceItem.tipoReferencia === "capítulo de livro") {
+                        const newReference:IReference = {
+                            id: '',
+                            title: referenceItem.title,
+                            tipoReferencia: referenceItem.tipoReferencia,
+                            ...(referenceItem?.titleCapitulo != null && { titleCapitulo: referenceItem.titleCapitulo }),
+                            ...(referenceItem?.autor != null && { autor: referenceItem.autor }),
+                            ...(referenceItem?.organizador != null && { organizador: referenceItem.organizador }),
+                            ...(referenceItem?.local != null && { local: referenceItem.local }),
+                            ...(referenceItem?.mes != null && { mes: referenceItem.mes }),
+                            ...(referenceItem?.volume != null && { volume: referenceItem.volume }),
+                            ...(referenceItem?.numero != null && { numero: referenceItem.numero }),
+                            ...(referenceItem?.ano != null && { ano: referenceItem.ano }),
+                            ...(referenceItem?.doi != null && { doi: referenceItem.doi }),
+                            ...(referenceItem?.url != null && { url: referenceItem.url })
+                        }
+                        await ReferencesService.addNew(newReference);
+                        
+                    } else if (referenceItem.tipoReferencia === "documento institucional / corporativo") {
+                        const newReference:IReference = {
+                            id: '',
+                            title: referenceItem.title,
+                            autor: referenceItem.instituicao,
+                            tipoReferencia: referenceItem.tipoReferencia,
+                            ...(referenceItem?.instituicao != null && { instituicao: referenceItem.instituicao }),
+                            ...(referenceItem?.local != null && { local: referenceItem.local }),
+                            ...(referenceItem?.mes != null && { mes: referenceItem.mes }),
+                            ...(referenceItem?.paginas != null && { paginas: referenceItem.paginas }),
+                            ...(referenceItem?.ano != null && { ano: referenceItem.ano }),
+                            ...(referenceItem?.url != null && { url: referenceItem.url })
+                        }
+                        await ReferencesService.addNew(newReference);
+                    }
+
                     resetForm();
                     
                     updateReferenceList();
@@ -137,7 +210,7 @@ export function References() {
         } else {
             setShowNotification({
                 active: true, 
-                mensage: "Preencha todos os campos", 
+                mensage: "Preencha pelo menos o Título", 
                 bgColor: "bg-orange-500"
             })
         }
@@ -152,7 +225,7 @@ export function References() {
             try {
                 
                 await ReferencesService.update(referenceItem);
-                setReferenceItem({id:'', title:'', tipoReferencia: '', autor: '',});
+                setReferenceItem({id:'', title:'', tipoReferencia: ''});
                 setEditReference(false);
                 
                 updateReferenceList();
@@ -183,6 +256,7 @@ export function References() {
     }
     
     const deleteReference = async () => {
+        setLoad(true);
         try {
             if (idDelet) {
                 await ReferencesService.delete(idDelet.id, idDelet.title);
@@ -202,9 +276,10 @@ export function References() {
             })
             setConfirmModal(false);
         }
+        setLoad(false);
     }
-
-
+    
+    
     return(
         <>
         {showNotification.active && (
@@ -218,7 +293,7 @@ export function References() {
         
         <div className="flex h-screen bg-gray-100">
             <Sidebar levelAccount={login} selected={5}/>
-            <div className="flex-grow overflow-auto">
+            <div ref={divRef} className="flex-grow overflow-auto">
                 {/* Header */}
                 <div className="flex items-center p-6">
                     <div className="p-2">
@@ -288,7 +363,7 @@ export function References() {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">PÁGINAS:</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="" 
                                                 value={viewReferenceItem.paginas}
                                                 disabled={true}/>
                                         </div>
@@ -297,7 +372,7 @@ export function References() {
                                         <select className="w-full border border-gray-500 rounded p-2"
                                             value={viewReferenceItem.mes}
                                             disabled={true}>
-                                            <option value="">Selecione o mês</option>
+                                            <option value=""></option>
                                             <option value="jan">jan</option>
                                             <option value="fev">fev</option>
                                             <option value="mar">mar</option>
@@ -358,20 +433,20 @@ export function References() {
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" 
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.autor}
                                                 disabled={true}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">EDIÇÃO:</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: 2. ed." 
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2" 
                                                 value={viewReferenceItem.edicao}
                                                 disabled={true}/>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">LOCAL:</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.local}
                                                 disabled={true}/>
                                         </div>
@@ -394,7 +469,7 @@ export function References() {
                                         <select className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.mes}
                                                 disabled={true}>
-                                            <option value="">Selecione o mês</option>
+                                            <option value=""></option>
                                             <option value="jan">jan</option>
                                             <option value="fev">fev</option>
                                             <option value="mar">mar</option>
@@ -435,20 +510,20 @@ export function References() {
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">AUTOR(ES):</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" 
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.autor}
                                                 disabled={true}/>
                                     </div>
                                     <div>
                                         <label className="block text-gray-700 mb-2">ORGANIZADOR(ES):</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome" 
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.organizador}
                                                 disabled={true}/>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">LOCAL:</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.local}
                                                 disabled={true}/>
                                         </div>
@@ -457,7 +532,7 @@ export function References() {
                                         <select className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.mes}
                                                 disabled={true}>
-                                            <option value="">Selecione o mês</option>
+                                            <option value=""></option>
                                             <option value="jan">jan</option>
                                             <option value="fev">fev</option>
                                             <option value="mar">mar</option>
@@ -524,7 +599,7 @@ export function References() {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">LOCAL:</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.local}
                                                 disabled={true}/>
                                         </div>
@@ -533,7 +608,7 @@ export function References() {
                                         <select className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.mes}
                                                 disabled={true}>
-                                            <option value="">Selecione o mês</option>
+                                            <option value=""></option>
                                             <option value="jan">jan</option>
                                             <option value="fev">fev</option>
                                             <option value="mar">mar</option>
@@ -587,7 +662,7 @@ export function References() {
                 <div className="p-6">
                     <div className="bg-white rounded-lg border shadow-lg overflow-hidden">
 
-                        {/* Campo editar */}
+                        {/* Campo Cadastrar e editar */}
                         <div className={`${fieldBusca && 'hidden'} p-4 border-b`}>
                             <div className="pb-4 mb-4 border-b bg-white">
                                 <h2 className="text-lg font-semibold">{!editReference ? "Preencha o formulário": "Editando"}</h2>
@@ -1000,6 +1075,7 @@ export function References() {
                                     onClick={() => {
                                         setViewReferenceItem((prev) => (reference));
                                         setOpenView(true);
+                                        scrollToTop();
                                     }}
                                     className="p-1 text-gray-600 hover:text-blue-600">
                                     <Eye size={18} />
@@ -1083,7 +1159,7 @@ export function References() {
 
 
                     
-                    <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[20%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => {
                                 setConfirmModal(false);
                                 setIdDelet(null);

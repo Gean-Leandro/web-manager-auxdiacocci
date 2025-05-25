@@ -6,6 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 import { AccountService } from "../../services/accountService";
 import { Check, Edit2, Eye, Microscope, Plus, Trash2, X } from "lucide-react";
+import { ScreamLoading } from "../../components/ScreamLoading";
 
 export function ScientificNames() {
     const [scientificNames, setScientificNames] = useState<IScientificNames[]>([]);
@@ -20,6 +21,7 @@ export function ScientificNames() {
     const [editScientificName, setEditScientificName] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [login, setLogin] = useState<string>('');
+    const [load, setLoad] = useState<boolean>(false);
 
     useEffect(() => {
         document.title = "Nomes Científicos";
@@ -74,6 +76,7 @@ export function ScientificNames() {
     }
 
     const addNewScientificName = async () => {
+        setLoad(true);
         if (!(scientificNameItem.name === "")) {
 
             const nameExist = scientificNames.some(
@@ -113,12 +116,12 @@ export function ScientificNames() {
                 bgColor: "bg-orange-500"
             })
         }
-        
+        setLoad(false);
     }
 
     const updateScientificName = async () => {
         setDisableButton(true);
-
+        setLoad(true);
         try {
             const scientificNameIdentic = scientificNames.some(
                 (item) => item.name.trim() === scientificNameItem.name.trim() 
@@ -159,9 +162,11 @@ export function ScientificNames() {
             })
         }
         setDisableButton(false);
+        setLoad(false);
     }
     
     const deleteScientificName = async () => {
+        setLoad(true);
         try {
             if (idDelet) {
                 await ScientificNamesService.delete(idDelet.id, idDelet.name);
@@ -181,6 +186,7 @@ export function ScientificNames() {
             })
             setConfirmModal(false);
         }
+        setLoad(false);
     }
 
 
@@ -193,7 +199,7 @@ export function ScientificNames() {
             onClose={() => setShowNotification({active: false, mensage:"", bgColor:""})}
             />
         )}
-
+        {load && <ScreamLoading/>}
         <div className="flex h-screen bg-gray-100">
             <Sidebar levelAccount={login} selected={4}/>
             <div className="flex-grow overflow-auto">
@@ -370,7 +376,7 @@ export function ScientificNames() {
 
 
                     
-                    <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[20%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => {
                                 setConfirmModal(false);
                                 setIdDelet(null);

@@ -46,7 +46,7 @@ export function Sidebar(props:ISidebar){
             <nav className="flex-grow">
             <ul className="space-y-2">
                 <li>
-                <Link to={'/dashboard'} className={`${props.selected === 1 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3`}>
+                <Link to={'/dashboard'} className={`${props.selected === 1 ? "bg-blue-800 text-white": "text-gray-300"} flex items-center px-4 py-3 hover:bg-blue-800 hover:text-white`}>
                     <LayoutDashboard className="mr-3" size={20} />
                     <span>Dashboard</span>
                 </Link>

@@ -89,6 +89,7 @@ export function ScoreInput(props:ScoreInputProps) {
 
     const editScoreDescriptionActive = (index:number) => {
         setDescription(props.list[index].description)
+        setEditScoreIndex(index);
         setIsOpen(true);
     }
 
@@ -114,6 +115,7 @@ export function ScoreInput(props:ScoreInputProps) {
                     setEditScoreIndex(null);
                     setEditDescriptionIndex(null);
                     setNewDescription("");
+                    setDescription([]);
                     setIsOpen(false);
                     setShowNotification({
                         active: true,
@@ -261,6 +263,7 @@ export function ScoreInput(props:ScoreInputProps) {
                 bgColor: "bg-orange-500"
             });
         }
+        event.target.value = "";
     };
 
     return(
@@ -274,7 +277,7 @@ export function ScoreInput(props:ScoreInputProps) {
         )}
         <label className="block text-sm font-medium text-gray-700 mb-2">SCORE:</label>
 
-        <div className={`flex space-x-2 justify-between ${editScoreIndex !== null ? "hidden" : ""}`}>
+        <div className={`flex space-x-2 justify-between ${editScoreIndex !== null && !isOpen ? "hidden" : ""}`}>
             <div className="w-[20%]">
                 <input 
                     value={level}
@@ -315,7 +318,7 @@ export function ScoreInput(props:ScoreInputProps) {
         </div>
             
         {/* Campo para editar */}
-        <div className={`flex space-x-2 justify-between ${editScoreIndex !== null ? "" : "hidden"}`}>
+        <div className={`flex space-x-2 justify-between ${editScoreIndex !== null && !isOpen ? "" : "hidden"}`}>
             <div className="w-[20%]">
                 <input 
                     value={level}
@@ -532,7 +535,7 @@ export function ScoreInput(props:ScoreInputProps) {
                             </svg>
                         </button>
                     </div>
-                    <img src={typeof imageView === "string"? imageView : imageUrlFileView} alt="Visualização" className="max-w-full max-h-[70vh] rounded border-[2px] border-mygray-500 mb-4" />
+                    <img src={typeof imageView === "string"? imageView : imageUrlFileView} alt="Visualização" className="max-w-full max-h-[70vh] rounded mb-4" />
                 </div>
             </div>
         )}

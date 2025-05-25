@@ -248,7 +248,7 @@ export function EditAccount() {
 
 
                     
-                    <div className="h-[5%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
+                    <div className="h-[5%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
                         <button onClick={() => setConfirmModal(false)} 
                             className="flex justify-center items-center border border-gray-500 bg-white text-gray-800 w-[150px] px-1 py-2 rounded-md hover:bg-gray-100">
                             CANCELAR

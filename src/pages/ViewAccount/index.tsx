@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
-import { AccountService, IAccount } from "../../services/accountService";
+import { AccountService, IAccount,Ihistoric } from "../../services/accountService";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
@@ -13,9 +13,8 @@ export function ViewAccount() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-
     const [login, setLogin] = useState<string>('');
-    const [account, setAccount] = useState<IAccount>(location.state);
+    const [account, setAccount] = useState<IAccount>({uid: '', name:'', email: '', level: '', active: true, historic: []});
 
     useEffect(() => {
         document.title = "Visualizando conta";
@@ -24,6 +23,8 @@ export function ViewAccount() {
                 const uid = user.uid;
                 const query = await AccountService.getAccountLevel(uid);
                 setLogin(query);
+                const queryAccountView = await AccountService.getAccount(location.state);
+                setAccount(queryAccountView);
             } 
         })
         return () => {
@@ -119,10 +120,18 @@ export function ViewAccount() {
                     </div>
                     
                     <div className='border-t flex w-[100%] items-center py-2 border-b hover:bg-gray-50'>
-                        <p className='border-x w-[40%] flex justify-center items-center font-bold'>Tipo</p>
-                        <p className='border-x w-[30%] flex justify-center items-center font-bold'>Item</p>
-                        <p className='border-x w-[20%] flex justify-center items-center font-bold'>Entidade</p>
-                        <p className='border-x w-[20%] flex justify-center items-center font-bold'>Data/Hora</p>
+                        <div className='w-[20%]'>
+                            <p className='border-x flex justify-center items-center font-bold'>Tipo</p>
+                        </div>
+                        <div className='w-[40%]'>
+                            <p className='border-x flex justify-center items-center font-bold'>Item</p>
+                        </div>
+                        <div className='w-[20%]'>
+                            <p className='border-x flex justify-center items-center font-bold'>Entidade</p>
+                        </div>
+                        <div className='w-[20%]'>
+                            <p className='border-x flex justify-center items-center font-bold'>Data/Hora</p>
+                        </div>
                     </div>
                     {/* Área vazia com ícone */}
                     <div className="h-[220px] overflow-y-auto border-t-4">
@@ -141,18 +150,18 @@ export function ViewAccount() {
                             <>
                                 { account.historic.map((item, index) => (
                                     <div key={index} 
-                                        className="flex w-[100%] items-center justify-between h-[40px] border-b hover:bg-gray-50">
+                                        className="flex w-[100%] items-center justify-between border-b hover:bg-gray-50">
                                         
-                                        <p className='border-x w-[40%] flex justify-center break-words items-center'>
+                                        <p className='border-x w-[20%] p-2 flex h-[100%] justify-center break-words items-center'>
                                             {item.action}
                                         </p>
-                                        <p className='border-x w-[30%] flex justify-center break-words items-center'>
+                                        <p className='w-[40%] flex h-[100%] p-2 justify-center break-words items-center'>
                                             {item.name}
                                         </p>
-                                        <p className='border-x w-[20%] flex justify-center break-words items-center'>
+                                        <p className='border-l w-[20%] flex h-[100%] p-2 justify-center break-words items-center'>
                                             {item.entity}
                                         </p>
-                                        <p className='border-x w-[20%] flex justify-center break-words items-center'>
+                                        <p className='border-x w-[20%] flex h-[100%] p-2 justify-center break-words items-center'>
                                             {item.timestamp.toDate().toLocaleString()}
                                         </p>
                                     </div>

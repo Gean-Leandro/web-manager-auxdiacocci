@@ -123,10 +123,18 @@ export default function Dashboard() {
                     </div>
                     
                     <div className='border-t flex w-[100%] items-center py-2 border-b hover:bg-gray-50'>
-                        <p className='border-x w-[37.5%] flex justify-center items-center font-bold'>Tipo</p>
-                        <p className='border-x w-[28.5%] flex justify-center items-center font-bold'>Item</p>
-                        <p className='border-x w-[18.5%] flex justify-center items-center font-bold'>Entidade</p>
-                        <p className='border-x w-[20%] flex justify-center items-center font-bold'>Data/Hora</p>
+                        <div className='w-[20%]'>
+                            <p className='border-x flex justify-center items-center font-bold'>Tipo</p>
+                        </div>
+                        <div className='w-[40%]'>
+                            <p className='border-x flex justify-center items-center font-bold'>Item</p>
+                        </div>
+                        <div className='w-[20%]'>
+                            <p className='border-x flex justify-center items-center font-bold'>Entidade</p>
+                        </div>
+                        <div className='w-[20%]'>
+                            <p className='border-x flex justify-center items-center font-bold'>Data/Hora</p>
+                        </div>
                     </div>
                     {/* Área vazia com ícone */}
                     <div className="h-[220px] overflow-y-auto border-t-4">
@@ -147,10 +155,10 @@ export default function Dashboard() {
                                     <div key={index} 
                                         className="flex w-[100%] items-center justify-between border-b hover:bg-gray-50">
                                         
-                                        <p className='border-x w-[40%] p-2 flex h-[100%] justify-center break-words items-center'>
+                                        <p className='border-x w-[20%] p-2 flex h-[100%] justify-center break-words items-center'>
                                             {item.action}
                                         </p>
-                                        <p className='w-[30%] flex h-[100%] p-2 justify-center break-words items-center'>
+                                        <p className='w-[40%] flex h-[100%] p-2 justify-center break-words items-center'>
                                             {item.name}
                                         </p>
                                         <p className='border-l w-[20%] flex h-[100%] p-2 justify-center break-words items-center'>

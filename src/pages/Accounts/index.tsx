@@ -12,7 +12,6 @@ export function Accounts() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    // const [filtradas, setFiltradas] = useState<IAccount[]>([]);
     const [busca, setBusca] = useState<string>('');
     const [login, setLogin] = useState<string>("");
 
@@ -22,7 +21,6 @@ export function Accounts() {
             const query = await AccountService.getAccounts();
             if (query.status === "OK") {
                 setAccounts(query.result);
-                // setFiltradas(query.result);
             } else {
                 setShowNotification({
                     active: true, 
@@ -121,7 +119,7 @@ export function Accounts() {
                                     <Link to={'/editando-conta'} state={user} className={`${login !== "admin"? "hidden" : ""} p-1 text-gray-600 hover:text-blue-600`}>
                                         <Edit2 size={18} />
                                     </Link>
-                                    <Link to={'/visualizando-conta'} state={user} className="p-1 text-gray-600 hover:text-blue-600">
+                                    <Link to={'/visualizando-conta'} state={user.uid} className="p-1 text-gray-600 hover:text-blue-600">
                                         <Eye size={18} />
                                     </Link>
                                 </div>

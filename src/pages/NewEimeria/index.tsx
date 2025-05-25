@@ -91,6 +91,7 @@ export function NewEimeria(){
                 bgColor: "bg-orange-500"
             });
         }
+        event.target.value = "";
     };
 
     const validateFields = (): boolean => {
@@ -145,15 +146,14 @@ export function NewEimeria(){
     const addNewEimeria = async () => {   
         setLoading(true);     
         try {
-            console.log(eimeria);
-            // await EimeriaService.salvarEimeria(eimeria, category);
+            await EimeriaService.salvarEimeria(eimeria, category);
             setLoading(false);     
             setShowNotification({
                 active: true,
                 mensage: "Nova espécie cadastrada!",
                 bgColor: "bg-green-600",
             });
-            // navigate('/eimerias')
+            navigate('/eimerias');
         } catch (error) {
             setLoading(false);     
             setShowNotification({
