@@ -87,10 +87,14 @@ export function References() {
     }, [references, busca]);
 
     const validateFields = () => {
-        if (referenceItem.title !== '' && referenceItem.tipoReferencia !== ""){
+        if (referenceItem.title !== '' && referenceItem.tipoReferencia !== "" && referenceItem.tipoReferencia !== "documento institucional / corporativo"  && referenceItem.autor !== ""){
             return true;
         } else {
-            return false;
+            if(referenceItem.tipoReferencia === "documento institucional / corporativo" && referenceItem.title !== '' && referenceItem.instituicao && referenceItem.instituicao !== "") {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -159,8 +163,11 @@ export function References() {
                             ...(referenceItem?.autor != null && { autor: referenceItem.autor }),
                             ...(referenceItem?.organizador != null && { organizador: referenceItem.organizador }),
                             ...(referenceItem?.local != null && { local: referenceItem.local }),
+                            ...(referenceItem?.editora != null && { editora: referenceItem.editora }),
+                            ...(referenceItem?.edicao != null && { edicao: referenceItem.edicao }),
+                            ...(referenceItem?.paginas != null && { paginas: referenceItem.paginas }),
                             ...(referenceItem?.mes != null && { mes: referenceItem.mes }),
-                            ...(referenceItem?.volume != null && { volume: referenceItem.volume }),
+                            ...(referenceItem?.volume != null && { volume: referenceItem.volume }), 
                             ...(referenceItem?.numero != null && { numero: referenceItem.numero }),
                             ...(referenceItem?.ano != null && { ano: referenceItem.ano }),
                             ...(referenceItem?.doi != null && { doi: referenceItem.doi }),
@@ -208,11 +215,31 @@ export function References() {
                 })
             }
         } else {
-            setShowNotification({
-                active: true, 
-                mensage: "Preencha pelo menos o Título", 
-                bgColor: "bg-orange-500"
-            })
+            if (referenceItem.tipoReferencia === "artigo"){
+                setShowNotification({
+                    active: true, 
+                    mensage: "Preencha pelo menos o Título e autor(es)", 
+                    bgColor: "bg-orange-500"
+                })
+            } else if (referenceItem.tipoReferencia === "livro"){
+                setShowNotification({
+                    active: true, 
+                    mensage: "Preencha pelo menos o Título e autor(es)", 
+                    bgColor: "bg-orange-500"
+                })
+            } else if (referenceItem.tipoReferencia === "capítulo de livro"){
+                setShowNotification({
+                    active: true, 
+                    mensage: "Preencha pelo menos o Título do livro e autor(es)", 
+                    bgColor: "bg-orange-500"
+                })
+            } else if (referenceItem.tipoReferencia === "documento institucional / corporativo"){
+                setShowNotification({
+                    active: true, 
+                    mensage: "Preencha pelo menos o Título e instituição/Empresa", 
+                    bgColor: "bg-orange-500"
+                })
+            }
         }
         
         setLoad(false);
@@ -514,17 +541,38 @@ export function References() {
                                                 value={viewReferenceItem.autor}
                                                 disabled={true}/>
                                     </div>
-                                    <div>
-                                        <label className="block text-gray-700 mb-2">ORGANIZADOR(ES):</label>
-                                        <input type="text" className="w-full border border-gray-500 rounded p-2"
-                                                value={viewReferenceItem.organizador}
-                                                disabled={true}/>
+                                    <div className="grid grid-cols-3 gap-4">
+
+                                        <div>
+                                            <label className="block text-gray-700 mb-2">ORGANIZADOR(ES):</label>
+                                            <input type="text" className="w-full border border-gray-500 rounded p-2"
+                                                    value={viewReferenceItem.organizador}
+                                                    disabled={true}/>
+                                        </div>
+                                        <div>
+                                            <label className="block text-gray-700 mb-2">EDIÇÃO:</label>
+                                            <input type="text" className="w-full border border-gray-500 rounded p-2"
+                                                    value={viewReferenceItem.edicao}
+                                                    disabled={true}/>
+                                        </div>
+                                        <div>
+                                            <label className="block text-gray-700 mb-2">PÁGINAS:</label>
+                                            <input type="text" className="w-full border border-gray-500 rounded p-2"
+                                                    value={viewReferenceItem.paginas}
+                                                    disabled={true}/>
+                                        </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-3 gap-4">
                                         <div>
                                         <label className="block text-gray-700 mb-2">LOCAL:</label>
                                         <input type="text" className="w-full border border-gray-500 rounded p-2"
                                                 value={viewReferenceItem.local}
+                                                disabled={true}/>
+                                        </div>
+                                        <div>
+                                        <label className="block text-gray-700 mb-2">EDITORA:</label>
+                                        <input type="text" className="w-full border border-gray-500 rounded p-2"
+                                                value={viewReferenceItem.editora}
                                                 disabled={true}/>
                                         </div>
                                         <div>
@@ -859,18 +907,38 @@ export function References() {
                                                     value={referenceItem.autor}
                                                     onChange={(e) => setReferenceItem((prev) => ({ ...prev, autor:e.target.value}))}/>
                                         </div>
-                                        <div>
-                                            <label className="block text-gray-700 mb-2">ORGANIZADOR(ES):</label>
-                                            <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome (Ed.)" 
-                                                    value={referenceItem.organizador}
-                                                    onChange={(e) => setReferenceItem((prev) => ({ ...prev, organizador:e.target.value}))}/>
+                                        <div className="grid grid-cols-3 gap-4">
+                                            <div>
+                                                <label className="block text-gray-700 mb-2">ORGANIZADOR(ES):</label>
+                                                <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Ex: SOBRENOME, Nome; SOBRENOME, Nome (Ed.)" 
+                                                        value={referenceItem.organizador}
+                                                        onChange={(e) => setReferenceItem((prev) => ({ ...prev, organizador:e.target.value}))}/>
+                                            </div>
+                                            <div>
+                                                <label className="block text-gray-700 mb-2">EDIÇÃO:</label>
+                                                <input type="text" className="w-full border border-gray-500 rounded p-2"
+                                                        value={referenceItem.edicao}
+                                                        onChange={(e) => setReferenceItem((prev) => ({ ...prev, edicao:e.target.value}))}/>
+                                            </div>
+                                            <div>
+                                                <label className="block text-gray-700 mb-2">PÁGINAS:</label>
+                                                <input type="text" className="w-full border border-gray-500 rounded p-2"
+                                                        value={referenceItem.paginas}
+                                                        onChange={(e) => setReferenceItem((prev) => ({ ...prev, paginas:e.target.value}))}/>
+                                            </div>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-3 gap-4">
                                             <div>
                                                 <label className="block text-gray-700 mb-2">LOCAL:</label>
                                                 <input type="text" className="w-full border border-gray-500 rounded p-2" placeholder="Cidade" 
                                                         value={referenceItem.local}
                                                         onChange={(e) => setReferenceItem((prev) => ({ ...prev, local:e.target.value}))}/>
+                                            </div>
+                                            <div>
+                                                <label className="block text-gray-700 mb-2">EDITORA:</label>
+                                                <input type="text" className="w-full border border-gray-500 rounded p-2" 
+                                                        value={referenceItem.editora}
+                                                        onChange={(e) => setReferenceItem((prev) => ({ ...prev, editora:e.target.value}))}/>
                                             </div>
                                             <div>
                                                 <label className="block text-gray-700 mb-2">MÊS:</label>

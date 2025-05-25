@@ -97,14 +97,23 @@ export function NewEimeria(){
     const validateFields = (): boolean => {
         if (eimeria.name !== ''){
             if(eimeria.imgLocal !== ''){
-                if(eimeria.clinical_signs.length > 0){
-                    if(eimeria.general_description.length > 0){
-                        if (eimeria.place_of_action.length > 0){
-                            return true;
+                if (category !== ""){
+                    if(eimeria.general_description !== ''){
+                        if(eimeria.place_of_action !== ''){
+                            if (eimeria.clinical_signs.length > 0){
+                                return true;
+                            } else {
+                                setShowNotification({
+                                    active: true,
+                                    mensage: "Insira pelo menos um sinal clínicio ou Sinal macroscópico",
+                                    bgColor: "bg-orange-500",
+                                });
+                                return false;
+                            }
                         } else {
                             setShowNotification({
                                 active: true,
-                                mensage: "Insira pelo menos um local de ação",
+                                mensage: "Preencha o local de ação",
                                 bgColor: "bg-orange-500",
                             });
                             return false;
@@ -112,7 +121,7 @@ export function NewEimeria(){
                     } else {
                         setShowNotification({
                             active: true,
-                            mensage: "Insira pelo menos uma descrição geral",
+                            mensage: "Preencha a descrição geral",
                             bgColor: "bg-orange-500",
                         });
                         return false;
@@ -120,7 +129,7 @@ export function NewEimeria(){
                 } else {
                     setShowNotification({
                         active: true,
-                        mensage: "Insira pelo menos um sinal clínicio ou Sinal macroscópico",
+                        mensage: "Selecione uma categoria",
                         bgColor: "bg-orange-500",
                     });
                     return false;
@@ -144,24 +153,22 @@ export function NewEimeria(){
     } 
 
     const addNewEimeria = async () => {   
-        setLoading(true);     
-        try {
-            await EimeriaService.salvarEimeria(eimeria, category);
-            setLoading(false);     
-            setShowNotification({
-                active: true,
-                mensage: "Nova espécie cadastrada!",
-                bgColor: "bg-green-600",
-            });
-            navigate('/eimerias');
-        } catch (error) {
-            setLoading(false);     
-            setShowNotification({
-                active: true,
-                mensage: "Erro: " + error,
-                bgColor: "bg-orange-500",
-            });
+        setLoading(true);
+        if (validateFields()){
+            try {
+                await EimeriaService.salvarEimeria(eimeria, category);
+                setLoading(false);
+                navigate('/eimerias');
+            } catch (error) { 
+                setLoading(false);
+                setShowNotification({
+                    active: true,
+                    mensage: "Erro: " + error,
+                    bgColor: "bg-orange-500",
+                });
+            }
         }
+        setLoading(false);
     } 
 
     return(

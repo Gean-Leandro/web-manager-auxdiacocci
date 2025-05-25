@@ -95,24 +95,80 @@ export function UpdateEimeria(){
         }
     };
 
+    const validateFields = (): boolean => {
+        if (eimeria.name !== ''){
+            if(eimeria.imgLocal !== ''){
+                if (category !== ""){
+                    if(eimeria.general_description !== ''){
+                        if(eimeria.place_of_action !== ''){
+                            if (eimeria.clinical_signs.length > 0){
+                                return true;
+                            } else {
+                                setShowNotification({
+                                    active: true,
+                                    mensage: "Insira pelo menos um sinal clínicio ou Sinal macroscópico",
+                                    bgColor: "bg-orange-500",
+                                });
+                                return false;
+                            }
+                        } else {
+                            setShowNotification({
+                                active: true,
+                                mensage: "Preencha o local de ação",
+                                bgColor: "bg-orange-500",
+                            });
+                            return false;
+                        }
+                    } else {
+                        setShowNotification({
+                            active: true,
+                            mensage: "Preencha a descrição geral",
+                            bgColor: "bg-orange-500",
+                        });
+                        return false;
+                    }
+                } else {
+                    setShowNotification({
+                        active: true,
+                        mensage: "Selecione uma categoria",
+                        bgColor: "bg-orange-500",
+                    });
+                    return false;
+                }
+            } else {
+                setShowNotification({
+                    active: true,
+                    mensage: "Selecione uma imagem da área de ação",
+                    bgColor: "bg-orange-500",
+                });
+                return false;
+            }
+        } else {
+            setShowNotification({
+                active: true,
+                mensage: "Preencha o campo nome",
+                bgColor: "bg-orange-500",
+            });
+            return false;
+        }
+    } 
+
     const updateOldEimeria = async () => {
         setLoad(true);
-        try {
-            await EimeriaService.update(eimeria, category);
-            navigate('/eimerias')
-            setShowNotification({
-                active: true,
-                mensage: "Nova espécie cadastrada!",
-                bgColor: "bg-green-600",
-            });
-        } catch (error) {
-            setConfirmModal(false);
-            setShowNotification({
-                active: true,
-                mensage: "Erro: " + error,
-                bgColor: "bg-orange-500",
-            });  
+        if (validateFields()){
+            try {
+                await EimeriaService.update(eimeria, category);
+                navigate('/eimerias');
+            } catch (error) {
+                setConfirmModal(false);
+                setShowNotification({
+                    active: true,
+                    mensage: "Erro: " + error,
+                    bgColor: "bg-orange-500",
+                });  
+            }
         }
+        setConfirmModal(false);
         setLoad(false);
     } 
 
