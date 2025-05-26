@@ -172,7 +172,7 @@ export const AccountService = {
                     id: account.uid, 
                     name: account.email, 
                     action: 'Atualizando conta', 
-                    entity: 'Contas', 
+                    entity: 'Contas/Meu Perfil', 
                     timestamp: Timestamp.now()
                 }
 
@@ -219,6 +219,18 @@ export const AccountService = {
 
             // Atualizar senha
             await updatePassword(user, novaSenha);
+
+            const newHistoric = {
+                uid: user.uid,
+                id: user.uid, 
+                name: user.email, 
+                action: 'Atualizando senha da conta', 
+                entity: 'Meu Perfil', 
+                timestamp: Timestamp.now()
+            }
+
+            await this.updateActivity(newHistoric);
+
             return "Senha alterada com sucesso!";
         } catch (error: any) {
             switch (error.code) {
@@ -234,5 +246,5 @@ export const AccountService = {
                 throw "Erro ao alterar senha: " + error.message;
             }
         }
-        }
+    }
 }
