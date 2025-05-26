@@ -8,7 +8,8 @@ import { auth } from "../../../firebaseConfig";
 import { UserCog } from "lucide-react";
 
 export function ViewAccount() {
-    const location = useLocation()
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
@@ -28,9 +29,16 @@ export function ViewAccount() {
             } 
         })
         return () => {
+            if (!location.state) {
+                navigate('/contas');
+            }
             unsubscribe();
         };
-    }, []);
+    }, [location, navigate]);
+
+    if (!location.state) {
+        return <p>Você acessou esta página de forma incorreta.</p>;
+    }
 
     return(
         <>

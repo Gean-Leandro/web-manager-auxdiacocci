@@ -9,30 +9,9 @@ import { UserCog } from "lucide-react";
 import { ScreamLoading } from "../../components/ScreamLoading";
 
 export function EditAccount() {
-    const location = useLocation()
-    const navigate = useNavigate()
+    const location = useLocation();
+    const navigate = useNavigate();
     const locateAccount = location.state
-
-    const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
-        {active:false, mensage:"", bgColor:""}
-    );
-    const [accountItem, setAccountItem] = useState<IAccount>(location.state);
-    const [disableButton, setDisableButton] = useState<boolean>(false);
-    const [erro, setErro] = useState<{campo: string, mensage: string}>({campo: '', mensage:''});
-    const [confirmModal, setConfirmModal] = useState<boolean>(false);
-    const [login, setLogin] = useState<string>('');
-    const [load, setLoad] = useState<boolean>(false);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAccountItem((prev) => ({...prev, level:e.target.value}));
-    };
-    const handleChangeActive = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.value == 'active'){
-            setAccountItem((prev) => ({...prev, active:true}));
-        } else {
-            setAccountItem((prev) => ({...prev, active:false}));
-        }
-    };
 
     useEffect(() => {
         document.title = "Editando conta";
@@ -53,9 +32,38 @@ export function EditAccount() {
             } 
         })
         return () => {
+            if (!location.state) {
+                navigate('/contas');
+            }
             unsubscribe();
         };
-    }, []);
+    }, [location, navigate]);
+
+    if (!location.state) {
+        return <p>Você acessou esta página de forma incorreta.</p>;
+    }
+
+    
+    const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
+        {active:false, mensage:"", bgColor:""}
+    );
+    const [accountItem, setAccountItem] = useState<IAccount>(location.state);
+    const [disableButton, setDisableButton] = useState<boolean>(false);
+    const [erro, setErro] = useState<{campo: string, mensage: string}>({campo: '', mensage:''});
+    const [confirmModal, setConfirmModal] = useState<boolean>(false);
+    const [login, setLogin] = useState<string>('');
+    const [load, setLoad] = useState<boolean>(false);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setAccountItem((prev) => ({...prev, level:e.target.value}));
+    };
+    const handleChangeActive = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value == 'active'){
+            setAccountItem((prev) => ({...prev, active:true}));
+        } else {
+            setAccountItem((prev) => ({...prev, active:false}));
+        }
+    };
 
     const validateFields = ():boolean => {
         if (accountItem.name !== '') {

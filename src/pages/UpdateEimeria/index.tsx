@@ -33,6 +33,10 @@ interface eimeriaProps{
 }
 
 export function UpdateEimeria(){
+
+    const navigate = useNavigate();
+    const location = useLocation();
+    
     useEffect(() => {
         document.title = "Nova Eimeria";
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -43,12 +47,18 @@ export function UpdateEimeria(){
             } 
         })
         return () => {
+            if (!location.state) {
+                navigate('/eimerias');
+            }
             unsubscribe();
         };
-    }, []);
+    }, [location, navigate]);
 
-    const navigate = useNavigate();
-    const location = useLocation();
+    if (!location.state) {
+        return <p>Você acessou esta página de forma incorreta.</p>;
+    }
+
+    
     const [eimeria, setEimeria] = useState<eimeriaProps>({
         id: location.state.id,
         name: location.state.name,

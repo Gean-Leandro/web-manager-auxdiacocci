@@ -138,23 +138,17 @@ export const EimeriaService = {
             let eimeria
             if (docSnap.exists()) {
                 eimeria = { id: docSnap.id, ...docSnap.data() } as eimeriaProps;
-                console.log("Documento encontrado:", eimeria);
             } else {
-                // O documento não foi encontrado
                 console.warn(`Nenhum documento encontrado com o ID: ${id}`);
             }
 
-            // 1. Coletar todos os caminhos (imgPath) a serem deletados
             const pathsToDelete: string[] = [];
 
             if (eimeria) {
-
-                // Adiciona o imgPath principal, se existir
                 if (eimeria.imgPath) {
                     pathsToDelete.push(eimeria.imgPath);
                 }
                     
-                    // Adiciona os imgPath de cada item do score, se existirem
                 if (eimeria.score && eimeria.score.length > 0) {
                     eimeria.score.forEach(scoreItem => {
                     if (scoreItem.imgPath) {
@@ -164,14 +158,11 @@ export const EimeriaService = {
                 }
             }
 
-            console.log("Caminhos das imagens a serem deletadas:", pathsToDelete);
-
             // 2. Deletar as imagens do Firebase Storage
             const deleteImagePromises = pathsToDelete.map(async (path) => {
                 if (!path) return; // Pula caminhos vazios
                 const imageRef = ref(storage, path); // Cria a referência para o arquivo
                 await deleteObject(imageRef); // Tenta deletar
-                console.log(`Imagem deletada com sucesso: ${path}`);
             })
 
             await deleteDoc(doc(db, 'eimerias', id));

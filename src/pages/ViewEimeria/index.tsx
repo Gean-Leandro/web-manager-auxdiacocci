@@ -50,6 +50,9 @@ export function ViewEimeria(){
 
     }, [location, navigate]);
 
+    if (!location.state) {
+        return <p>Você acessou esta página de forma incorreta.</p>;
+    }
 
     const [eimeria, setEimeria] = useState<eimeriaProps>(location.state);
     const [image, setImage] = useState<string>("");

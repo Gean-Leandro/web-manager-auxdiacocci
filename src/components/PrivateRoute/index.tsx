@@ -44,5 +44,5 @@ export function PrivateRoute({ children, requireAdmin = false }: PrivateRoutePro
 
   if (loading || authorized === null) return <p>Carregando...</p>;
 
-  return user && authorized ? children : <Navigate to="/" replace />;
+  return user && authorized ? children : <Navigate to="*" replace />;
 }
