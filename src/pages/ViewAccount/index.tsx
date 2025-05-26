@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
-import { AccountService, IAccount,Ihistoric } from "../../services/accountService";
+import { AccountService, IAccount } from "../../services/accountService";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";

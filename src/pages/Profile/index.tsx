@@ -42,11 +42,13 @@ export function Profile() {
                 const nomeRegex = /^[A-Za-zÀ-ÿ\s]{2,}$/.test(name);
                 
                 if (!nomeRegex){
-                    setErro({campo: 'name', mensage: "Nome inválido"})
+                    setShowNotification({
+                        active: true, 
+                        mensage: "Nome inválido", 
+                        bgColor: "bg-orange-500"
+                    });
                     return false;
                 }
-                
-                setErro({campo: '', mensage: ""})
                 return true;
             }
         } 
@@ -55,14 +57,20 @@ export function Profile() {
             if (password.password !== '' && password.confirmPassword !== "") {
                 
                 if (password.password !== password.confirmPassword){
-                    setErro({campo: 'password', mensage: "Senha está diferente"})
+                    setShowNotification({
+                        active: true, 
+                        mensage: "A senha está diferente", 
+                        bgColor: "bg-orange-500"
+                    });
                     return false;
                 } else if (password.password.length < 8) {
-                    setErro({campo: 'password', mensage: "Senha precisa de no mínimo 8 caracteres"})
+                    setShowNotification({
+                        active: true, 
+                        mensage: "Senha precisa de no mínimo 8 caracteres", 
+                        bgColor: "bg-orange-500"
+                    });
                     return false;
                 }
-                
-                setErro({campo: '', mensage: ""})
                 return true;
             }
         }

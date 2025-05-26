@@ -46,24 +46,38 @@ export function NewAccount() {
             const emailRegex = /^[^\s@]+@[^\s@]+\.(com|com\.br)$/.test(accountItem.email);
             
             if (!nomeRegex){
-                setErro({campo: 'name', mensage: "Nome inválido"})
+                setShowNotification({
+                    active: true, 
+                    mensage: "Nome inválido", 
+                    bgColor: "bg-orange-500"
+                });
                 return false;
             }
             
             if (!emailRegex){
-                setErro({campo: 'email', mensage: "E-mail inválido"})
+                setShowNotification({
+                    active: true, 
+                    mensage: "E-mail inválido", 
+                    bgColor: "bg-orange-500"
+                });
                 return false;
             }
             
             if (password.password !== password.confirmPassword){
-                setErro({campo: 'password', mensage: "Senha está diferente"})
+                setShowNotification({
+                    active: true, 
+                    mensage: "Senha e confirmar senha estão diferentes", 
+                    bgColor: "bg-orange-500"
+                });
                 return false;
             } else if (password.password.length < 8) {
-                setErro({campo: 'password', mensage: "Senha precisa de no mínimo 8 caracteres"})
+                setShowNotification({
+                    active: true, 
+                    mensage: "A Senha precisa de no mínimo 8 caracteres", 
+                    bgColor: "bg-orange-500"
+                });
                 return false;
             }
-            
-            setErro({campo: '', mensage: ""})
             return true;
         } else {
             setShowNotification({

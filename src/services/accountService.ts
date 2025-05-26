@@ -223,11 +223,13 @@ export const AccountService = {
         } catch (error: any) {
             switch (error.code) {
             case "auth/wrong-password":
-                throw "Senha atual incorreta.";
+                throw "Senha atual incorreta";
             case "auth/weak-password":
-                throw "A nova senha é muito fraca.";
+                throw "A nova senha é muito fraca";
             case "auth/requires-recent-login":
-                throw "Faça login novamente para alterar a senha.";
+                throw "Faça login novamente para alterar a senha";
+            case "auth/invalid-credential":
+                throw "Senha atual incorreta";
             default:
                 throw "Erro ao alterar senha: " + error.message;
             }

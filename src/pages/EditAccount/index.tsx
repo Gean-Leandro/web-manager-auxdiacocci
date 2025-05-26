@@ -69,10 +69,13 @@ export function EditAccount() {
         if (accountItem.name !== '') {
             const nomeRegex = /^[A-Za-zÀ-ÿ\s]{2,}$/.test(accountItem.name);
             if (!nomeRegex){
-                setErro({campo: 'name', mensage: "Nome inválido"})
+                setShowNotification({
+                    active: true, 
+                    mensage: "Nome inválido", 
+                    bgColor: "bg-orange-500"
+                });
                 return false;
             } 
-            setErro({campo: '', mensage: ""})
             return true;
         } else {
             setShowNotification({
