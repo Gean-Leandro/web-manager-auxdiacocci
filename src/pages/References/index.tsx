@@ -1192,7 +1192,7 @@ export function References() {
 
         {confirmModal && (
             <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="bg-white p-6 rounded-md w-[25%]">
+                <div className="bg-white p-6 rounded-md">
                     <div className="flex justify-between h-[10%] mb-3">
                         <div className="font-bold h-[24px] justify-center text-[18px] pl-8 flex items-center w-[90%]">
                             CONFIRMAÇÃO
