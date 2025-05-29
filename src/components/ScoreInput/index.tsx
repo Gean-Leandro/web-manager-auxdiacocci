@@ -413,7 +413,7 @@ export function ScoreInput(props:ScoreInputProps) {
         {/* Modal */}
         {isOpen && (
             <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="bg-white p-6 rounded-[8px] w-[50%] max-h-[50%]">
+                <div className="bg-white p-6 rounded-[8px] w-[50%]">
                     <div className="flex justify-between h-[10%] mb-3">
                         <div className="font-bold text-[18px] flex justify-center pl-16 items-center w-[90%]">
                             <strong className="text-mygray-600 mr-1">SCORE {">"}</strong>INFORMAÇÕES ADICIONAIS
@@ -470,7 +470,7 @@ export function ScoreInput(props:ScoreInputProps) {
                         </div>
 
                         <div className="mt-2 border h-[75%] border-gray-400 rounded-md bg-gray-50">
-                            <div className="min-h-[50px] max-h-[100%] overflow-y-auto w-[100%]">
+                            <div className="min-h-[50px] max-h-[200px] overflow-y-auto w-[100%]">
                                     { description.length === 0 ? (
                                         <p className="text-gray-500 pt-[15px] text-sm text-center">Nenhuma descrição adicionada</p>
                                     ): (
