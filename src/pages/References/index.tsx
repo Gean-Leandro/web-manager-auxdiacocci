@@ -21,12 +21,44 @@ export function References() {
     const [viewReferenceItem, setViewReferenceItem] = useState<IReference>({
         id:'',
         title: '',
-        tipoReferencia: ''
+        tipoReferencia: '',
+        autor: '',
+        ano: '',
+        instituicao: '',
+        organizador: '',
+        titleCapitulo: '',
+        titlePeriodic: '',
+        volume: '',
+        numero: '',
+        paginas: '',
+        editora: '',
+        edicao: '',
+        doi: '',
+        mes: '',
+        local: '',
+        tituloSite: '',
+        url: '',
     });
     const [referenceItem, setReferenceItem] = useState<IReference>({
         id:'',
         title: '',
-        tipoReferencia: ''
+        tipoReferencia: '',
+        autor: '',
+        ano: '',
+        instituicao: '',
+        organizador: '',
+        titleCapitulo: '',
+        titlePeriodic: '',
+        volume: '',
+        numero: '',
+        paginas: '',
+        editora: '',
+        edicao: '',
+        doi: '',
+        mes: '',
+        local: '',
+        tituloSite: '',
+        url: '',
     });
     const [idDelet, setIdDelet] = useState<IReference | null>(null);
     const [editReference, setEditReference] = useState<boolean>(false);
@@ -35,7 +67,27 @@ export function References() {
     const divRef = useRef<HTMLDivElement>(null);
     
     const resetForm = () => {
-        setReferenceItem({id: '', title: '', tipoReferencia: '', autor: ''})
+        setReferenceItem({
+            id:'',
+            title: '',
+            tipoReferencia: '',
+            autor: '',
+            ano: '',
+            instituicao: '',
+            organizador: '',
+            titleCapitulo: '',
+            titlePeriodic: '',
+            volume: '',
+            numero: '',
+            paginas: '',
+            editora: '',
+            edicao: '',
+            doi: '',
+            mes: '',
+            local: '',
+            tituloSite: '',
+            url: '',
+        })
     };
     
 
@@ -127,15 +179,22 @@ export function References() {
                             id: '',
                             title: referenceItem.title,
                             tipoReferencia: referenceItem.tipoReferencia,
-                            ...(referenceItem?.titlePeriodic != null && { titlePeriodic: referenceItem.titlePeriodic }),
-                            ...(referenceItem?.autor != null && { autor: referenceItem.autor }),
-                            ...(referenceItem?.paginas != null && { paginas: referenceItem.paginas }),
-                            ...(referenceItem?.mes != null && { mes: referenceItem.mes }),
-                            ...(referenceItem?.volume != null && { volume: referenceItem.volume }),
-                            ...(referenceItem?.numero != null && { numero: referenceItem.numero }),
-                            ...(referenceItem?.ano != null && { ano: referenceItem.ano }),
-                            ...(referenceItem?.doi != null && { doi: referenceItem.doi }),
-                            ...(referenceItem?.url != null && { url: referenceItem.url }),
+                            titlePeriodic: referenceItem.titlePeriodic,
+                            autor: referenceItem.autor,
+                            paginas: referenceItem.paginas,
+                            mes: referenceItem.mes,
+                            volume: referenceItem.volume,
+                            numero: referenceItem.numero,
+                            ano: referenceItem.ano,
+                            doi: referenceItem.doi,
+                            url: referenceItem.url,
+                            instituicao: '',
+                            organizador: '',
+                            titleCapitulo: '',
+                            editora: '',
+                            edicao: '',
+                            local: '',
+                            tituloSite: '',
                         }
                         await ReferencesService.addNew(newReference);
 
@@ -144,13 +203,22 @@ export function References() {
                             id: '',
                             title: referenceItem.title,
                             tipoReferencia: referenceItem.tipoReferencia,
-                            ...(referenceItem?.autor != null && { autor: referenceItem.autor }),
-                            ...(referenceItem?.paginas != null && { paginas: referenceItem.paginas }),
-                            ...(referenceItem?.mes != null && { mes: referenceItem.mes }),
-                            ...(referenceItem?.edicao != null && { edicao: referenceItem.edicao }),
-                            ...(referenceItem?.editora != null && { editora: referenceItem.editora }),
-                            ...(referenceItem?.ano != null && { ano: referenceItem.ano }),
-                            ...(referenceItem?.local != null && { local: referenceItem.local })
+                            autor: referenceItem.autor,
+                            paginas: referenceItem.paginas,
+                            mes: referenceItem.mes,
+                            edicao: referenceItem.edicao,
+                            editora: referenceItem.editora,
+                            ano: referenceItem.ano,
+                            local: referenceItem.local,
+                            instituicao: '',
+                            organizador: '',
+                            titleCapitulo: '',
+                            titlePeriodic: '',
+                            volume: '',
+                            numero: '',
+                            doi: '',
+                            tituloSite: '',
+                            url: '',
                         }
                         await ReferencesService.addNew(newReference);
                         
@@ -159,19 +227,22 @@ export function References() {
                             id: '',
                             title: referenceItem.title,
                             tipoReferencia: referenceItem.tipoReferencia,
-                            ...(referenceItem?.titleCapitulo != null && { titleCapitulo: referenceItem.titleCapitulo }),
-                            ...(referenceItem?.autor != null && { autor: referenceItem.autor }),
-                            ...(referenceItem?.organizador != null && { organizador: referenceItem.organizador }),
-                            ...(referenceItem?.local != null && { local: referenceItem.local }),
-                            ...(referenceItem?.editora != null && { editora: referenceItem.editora }),
-                            ...(referenceItem?.edicao != null && { edicao: referenceItem.edicao }),
-                            ...(referenceItem?.paginas != null && { paginas: referenceItem.paginas }),
-                            ...(referenceItem?.mes != null && { mes: referenceItem.mes }),
-                            ...(referenceItem?.volume != null && { volume: referenceItem.volume }), 
-                            ...(referenceItem?.numero != null && { numero: referenceItem.numero }),
-                            ...(referenceItem?.ano != null && { ano: referenceItem.ano }),
-                            ...(referenceItem?.doi != null && { doi: referenceItem.doi }),
-                            ...(referenceItem?.url != null && { url: referenceItem.url })
+                            titleCapitulo: referenceItem.titleCapitulo,
+                            autor: referenceItem.autor,
+                            organizador: referenceItem.organizador,
+                            local: referenceItem.local,
+                            editora: referenceItem.editora,
+                            edicao: referenceItem.edicao,
+                            paginas: referenceItem.paginas,
+                            mes: referenceItem.mes,
+                            volume: referenceItem.volume, 
+                            numero: referenceItem.numero,
+                            ano: referenceItem.ano,
+                            doi: referenceItem.doi,
+                            url: referenceItem.url,
+                            instituicao: '',
+                            titlePeriodic: '',
+                            tituloSite: '',
                         }
                         await ReferencesService.addNew(newReference);
                         
@@ -181,12 +252,21 @@ export function References() {
                             title: referenceItem.title,
                             autor: referenceItem.instituicao,
                             tipoReferencia: referenceItem.tipoReferencia,
-                            ...(referenceItem?.instituicao != null && { instituicao: referenceItem.instituicao }),
-                            ...(referenceItem?.local != null && { local: referenceItem.local }),
-                            ...(referenceItem?.mes != null && { mes: referenceItem.mes }),
-                            ...(referenceItem?.paginas != null && { paginas: referenceItem.paginas }),
-                            ...(referenceItem?.ano != null && { ano: referenceItem.ano }),
-                            ...(referenceItem?.url != null && { url: referenceItem.url })
+                            instituicao: referenceItem.instituicao,
+                            local: referenceItem.local,
+                            mes: referenceItem.mes,
+                            paginas: referenceItem.paginas,
+                            ano: referenceItem.ano,
+                            url: referenceItem.url,
+                            organizador: '',
+                            titleCapitulo: '',
+                            titlePeriodic: '',
+                            volume: '',
+                            numero: '',
+                            editora: '',
+                            edicao: '',
+                            doi: '',
+                            tituloSite: '',
                         }
                         await ReferencesService.addNew(newReference);
                     }
@@ -252,7 +332,27 @@ export function References() {
             try {
                 
                 await ReferencesService.update(referenceItem);
-                setReferenceItem({id:'', title:'', tipoReferencia: ''});
+                setReferenceItem({
+                    id:'',
+                    title: '',
+                    tipoReferencia: '',
+                    autor: '',
+                    ano: '',
+                    instituicao: '',
+                    organizador: '',
+                    titleCapitulo: '',
+                    titlePeriodic: '',
+                    volume: '',
+                    numero: '',
+                    paginas: '',
+                    editora: '',
+                    edicao: '',
+                    doi: '',
+                    mes: '',
+                    local: '',
+                    tituloSite: '',
+                    url: '',
+                });
                 setEditReference(false);
                 
                 updateReferenceList();
@@ -442,7 +542,7 @@ export function References() {
                                                 disabled={true}/>
                                     </div>
                                     <div>
-                                        <label className="block text-gray-700 mb-2">IRL:</label>
+                                        <label className="block text-gray-700 mb-2">URL:</label>
                                         <input type="text" className="w-full border border-gray-500 rounded p-2" 
                                                 value={viewReferenceItem.url}
                                                 disabled={true}/>
@@ -623,7 +723,7 @@ export function References() {
                                                 disabled={true}/>
                                     </div>
                                     <div>
-                                        <label className="block text-gray-700 mb-2">URL DO DOCUMENTO:</label>
+                                        <label className="block text-gray-700 mb-2">URL:</label>
                                         <input type="url" className="w-full border border-gray-500 rounded p-2" 
                                                 value={viewReferenceItem.url}
                                                 disabled={true}/>
@@ -693,7 +793,7 @@ export function References() {
                                                 disabled={true}/>
                                     </div>
                                     <div>
-                                        <label className="block text-gray-700 mb-2">URL DO DOCUMENTO:</label>
+                                        <label className="block text-gray-700 mb-2">URL:</label>
                                         <input type="url" className="w-full border border-gray-500 rounded p-2" 
                                                 value={viewReferenceItem.url}
                                                 disabled={true}/>
@@ -988,7 +1088,7 @@ export function References() {
                                                     onChange={(e) => setReferenceItem((prev) => ({ ...prev, doi:e.target.value}))}/>
                                         </div>
                                         <div>
-                                            <label className="block text-gray-700 mb-2">URL DO DOCUMENTO:</label>
+                                            <label className="block text-gray-700 mb-2">URL:</label>
                                             <input type="url" className="w-full border border-gray-500 rounded p-2" 
                                                     value={referenceItem.url}
                                                     onChange={(e) => setReferenceItem((prev) => ({ ...prev, url:e.target.value}))}/>
@@ -1052,7 +1152,7 @@ export function References() {
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="block text-gray-700 mb-2">URL DO DOCUMENTO:</label>
+                                            <label className="block text-gray-700 mb-2">URL:</label>
                                             <input type="url" className="w-full border border-gray-500 rounded p-2" 
                                                     value={referenceItem.url}
                                                     onChange={(e) => setReferenceItem((prev) => ({ ...prev, url:e.target.value}))}/>
@@ -1207,7 +1307,7 @@ export function References() {
                         </button>
                     </div>
 
-                    <div className="text-center mb-10">
+                    <div className="pl-5 text-center mb-10 w-[300px]">
                         <div className="flex mt-[50px] mb-4 items-center justify-center">
                             <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_514_1034)">

@@ -263,10 +263,10 @@ export function NewAccount() {
                         </button>
                     </div>
 
-                    <div className="text-center mb-5">
+                    <div className="text-center mb-5 w-[300px]">
                         Digite a sua senha para criar a conta
                         <div className="mt-3">
-                            <input className="mt-6 h-[45px] w-[100%] focus:ring-2 focus:ring-blue-500 outline-none focus:border-blue-500 bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" 
+                            <input className="mt-3 h-[45px] w-[103%] focus:ring-2 focus:ring-blue-500 outline-none focus:border-blue-500 bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" 
                                 onChange={(e) => setPasswordAccount(e.target.value)}
                                 type="password" 
                                 placeholder="Senha"/>

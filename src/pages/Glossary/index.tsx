@@ -420,7 +420,7 @@ export function Glossary() {
                         </button>
                     </div>
 
-                    <div className="text-center mb-10">
+                    <div className="pl-5 text-center mb-10 w-[300px]">
                         <div className="flex mt-[50px] mb-4 items-center justify-center">
                             <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_514_1034)">

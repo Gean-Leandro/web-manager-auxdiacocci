@@ -232,9 +232,9 @@ export function Login() {
                   </button>
               </div>
 
-              <div className="text-center mt-10 mb-10">
+              <div className="text-center mt-10 mb-10 w-[300px]">
                   Digite o E-mail da sua conta e clique em “Enviar” para receber um E-mail para redefinir a senha
-                  <input className='mt-6 h-[45px] w-[100%] focus:ring-2 focus:ring-blue-500 outline-none focus:border-blue-500 bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2' 
+                  <input className='mt-6 h-[45px] w-[105%] focus:ring-2 focus:ring-blue-500 outline-none focus:border-blue-500 bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2' 
                     type="email" onChange={(e) => setSendEmail(e.target.value)}
                     placeholder='E-mail'/>
               </div>
@@ -272,7 +272,7 @@ export function Login() {
                   </button>
               </div>
 
-              <div className="text-center mt-10 mb-5">
+              <div className="text-center mt-10 mb-5 w-[300px]">
                 <div className="flex mt-[50px] mb-4 items-center justify-center">
                   <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <g clip-path="url(#clip0_514_1034)">

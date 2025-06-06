@@ -239,7 +239,7 @@ export function EditAccount() {
                         </button>
                     </div>
 
-                    <div className="text-center mb-5">
+                    <div className="text-center mb-5 w-[300px]">
                         <div className="flex mt-[50px] mb-4 items-center justify-center">
                             <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g clip-path="url(#clip0_514_1034)">
