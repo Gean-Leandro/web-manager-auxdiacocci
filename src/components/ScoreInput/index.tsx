@@ -7,6 +7,7 @@ interface Iscore {
     img: string | File,
     imgUrlTemp: string,
     imgPath: string,
+    imgRef: string,
     description: Array<string>
 }
 
@@ -30,9 +31,11 @@ export function ScoreInput(props:ScoreInputProps) {
     const [editScoreIndex, setEditScoreIndex] = useState<number | null>(null);
     const [image, setImage] = useState<string | File>("");
     const [imageUrlFile, setImageUrlFile] = useState<string>("");
+    const [imageRef, setImageRef] = useState<string>("");
     const [imageView, setImageView] = useState<string | File>("");
     const [imageUrlFileView, setImageUrlFileView] = useState<string>("");
     const [alertLevel, setAlertLevel] = useState<boolean>(false);
+    const [alertImageRef, setAlertImageRef] = useState<boolean>(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleSelectImage = () => {
@@ -44,6 +47,7 @@ export function ScoreInput(props:ScoreInputProps) {
         setLevel(level);
         if (props.list[index].img !== ""){
             setImage(props.list[index].img);
+            setImageRef(props.list[index].imgRef);
         }
     }
     
@@ -62,6 +66,7 @@ export function ScoreInput(props:ScoreInputProps) {
                     img:image,
                     imgUrlTemp: imageUrlFile,
                     imgPath: '',
+                    imgRef: imageRef,
                     description:props.list[editScoreIndex].description
                 };
     
@@ -108,6 +113,7 @@ export function ScoreInput(props:ScoreInputProps) {
                         img: props.list[editScoreIndex].img, 
                         imgUrlTemp: props.list[editScoreIndex].imgUrlTemp,
                         imgPath: props.list[editScoreIndex].imgPath,
+                        imgRef: props.list[editScoreIndex].imgRef,
                         description: description
                     };
 
@@ -183,7 +189,8 @@ export function ScoreInput(props:ScoreInputProps) {
                 level: level, 
                 img: image, 
                 imgPath: '',
-                imgUrlTemp: imageUrlFile, 
+                imgUrlTemp: imageUrlFile,
+                imgRef: imageRef,
                 description: description
             });
             setDescription([]);
@@ -226,8 +233,17 @@ export function ScoreInput(props:ScoreInputProps) {
         if (level !== "") {
             if (!props.list.some((score) => score.level === level)){
                 if (!(Number(level) < 1)){
-                    setIsOpen(true);
-                    setAlertLevel(false);
+                    if (image !== "" && imageRef === "") {
+                        setShowNotification({
+                            active: true,
+                            mensage: "Ao adicionar uma imagem é necessario adcionar uma referência",
+                            bgColor: "bg-orange-500"
+                        })
+                        setAlertImageRef(true)
+                    } else {
+                        setIsOpen(true);
+                        setAlertLevel(false);
+                    }
                 } else {
                     setShowNotification({
                         active: true,
@@ -289,22 +305,36 @@ export function ScoreInput(props:ScoreInputProps) {
                 <p className={`text-red-600 mt-1 w-[100%] text-center ${alertLevel ? "" : "hidden"}`}>Adicione um nível válido</p>
             </div>
 
-            <button 
-                onClick={handleSelectImage}
-                type="button" 
-                className={`${image !== "" ? "bg-green-500 text-white" : "bg-mygray-300"} w-[70%] ${alertLevel && "h-[42px]"} text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300`}>
-                {image !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
-            </button>
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept=".jpg,.jpeg,.png"
-                onChange={handleFileChange}
-                className="hidden"/>
+            <div className="w-[70%]">
+                <button 
+                    onClick={handleSelectImage}
+                    type="button" 
+                    className={`${image !== "" ? "bg-green-500 text-white" : "bg-mygray-300"} w-[100%] ${!alertLevel && "h-[42px]"} text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300`}>
+                    {image !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
+                </button>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    onChange={handleFileChange}
+                    className="hidden"/>
 
+                <input type="text"
+                    value={imageRef}
+                    onChange={(e) => setImageRef(e.target.value ? e.target.value : "")}
+                    className={`${image === "" && "hidden"} ${alertImageRef ? "border-red-600" : "border-gray-500"} mt-2 border rounded-md px-3 py-2 w-[100%]`} 
+                    placeholder="Referência" 
+                />
+                <p className={`text-red-600 mt-1 w-[100%] text-center ${alertImageRef ? "" : "hidden"}`}>Adicione uma referência</p>
+            </div>
+
+                        
             <button className={`${image !== "" ? "" : "hidden"} ${alertLevel && "h-[42px]"} bg-white border-red-600 border-[2px] rounded-[8px] px-2`}
                 type="button"
-                onClick={() => setImage("")}>
+                onClick={() => {
+                    setImage("")
+                    setImageRef("")
+                }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -329,22 +359,35 @@ export function ScoreInput(props:ScoreInputProps) {
                 <p className={`text-red-600 mt-1 w-[100%] text-center ${alertLevel ? "" : "hidden"}`}>Adicione um nível válido</p>
             </div>
 
-            <button onClick={handleSelectImage} 
-                type="button" 
-                className={`${image !== "" ? "bg-green-500 text-white w-[50%]" : "bg-mygray-300 w-[70%]"} ${alertLevel && "h-[42px]"} text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300`}>
-                {image !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
-            </button>
+            <div className={`${image !== "" ? "w-[50%]" : "w-[70%]"}`}>
+                <button onClick={handleSelectImage} 
+                    type="button" 
+                    className={`${image !== "" ? "bg-green-500 text-white" : "bg-mygray-300"} ${alertLevel && "h-[42px]"} w-[100%] text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300`}>
+                    {image !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
+                </button>
 
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept=".jpg,.jpeg,.png"
-                onChange={handleFileChange}
-                className="hidden"/>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    onChange={handleFileChange}
+                    className="hidden"/>
+                
+                <input type="text"
+                        value={imageRef}
+                        onChange={(e) => setImageRef(e.target.value ? e.target.value : "")}
+                        className={`${image === "" && "hidden"} ${alertImageRef ? "border-red-600" : "border-gray-500"} mt-2 border rounded-md px-3 py-2 w-[100%]`} 
+                        placeholder="Referência" 
+                        />
+                <p className={`text-red-600 mt-1 w-[100%] text-center ${alertImageRef ? "" : "hidden"}`}>Adicione uma referência</p>
+            </div>
 
             <button className={`${image !== "" ? "" : "hidden"} ${alertLevel && "h-[42px]"} w-[20%] bg-white flex justify-center text-red-600 items-center border-red-600 border-[2px] rounded-[8px] px-2`}
                 type="button"
-                onClick={() => setImage("")}>
+                onClick={() => {
+                    setImage("")
+                    setImageRef("")
+                }}>
                 REMOVER IMAGEM
             </button>
 
@@ -376,6 +419,7 @@ export function ScoreInput(props:ScoreInputProps) {
                                         <button onClick={() => {
                                             setImageView(score.img);
                                             setImageUrlFileView(score.imgUrlTemp);
+                                            setImageRef(score.imgRef);
                                             setImageModal(true);
                                         }} 
                                             type="button" 
@@ -528,6 +572,7 @@ export function ScoreInput(props:ScoreInputProps) {
                         </div>
                         <button type="button" onClick={() => {
                             setImageView("");
+                            setImageRef("");
                             setImageModal(false);
                         }}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -536,6 +581,8 @@ export function ScoreInput(props:ScoreInputProps) {
                         </button>
                     </div>
                     <img src={typeof imageView === "string"? imageView : imageUrlFileView} alt="Visualização" className="max-w-full max-h-[70vh] rounded mb-4" />
+                    <p className="font-bold">Referência:</p>
+                    <p className="border-gray-500 bg-gray-50 my-2 border rounded-md px-3 py-2 w-[100%]">{imageRef}</p>
                 </div>
             </div>
         )}

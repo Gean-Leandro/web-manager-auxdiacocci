@@ -16,6 +16,7 @@ interface Iscore {
     img: string | File,
     imgUrlTemp: string,
     imgPath: string,
+    imgRef: string,
     description: Array<string>
 }
 

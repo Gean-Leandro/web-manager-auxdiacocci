@@ -12,6 +12,7 @@ interface Iscore {
     img: string,
     imgUrlTemp: string,
     imgPath: string,
+    imgRef: string,
     description: Array<string>
 }
 
@@ -56,6 +57,7 @@ export function ViewEimeria(){
 
     const [eimeria, setEimeria] = useState<eimeriaProps>(location.state);
     const [image, setImage] = useState<string>("");
+    const [imageRef, setImageRef] = useState<string>("");
     const [imageModal, setImageModal] = useState<boolean>(false);
     const [scoreModal, setScoreModal] = useState<boolean>(false);
     const [scoreDescription, setScpreDescription] = useState<string[]>([]);
@@ -194,6 +196,7 @@ export function ViewEimeria(){
                                                         {/* Botão visualizar imagem */}
                                                         <button onClick={() => {
                                                                 setImage(score.img);
+                                                                setImageRef(score.imgRef);
                                                                 setImageModal(true);
                                                             }} 
                                                             type="button" 
@@ -242,6 +245,7 @@ export function ViewEimeria(){
                         </div>
                         <button type="button" onClick={() => {
                             setImageModal(false);
+                            setImageRef("");
                             setImage('');
                         }}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -249,8 +253,10 @@ export function ViewEimeria(){
                             </svg>
                         </button>
                     </div>
-                    <div className="flex items-center justify-center">
+                    <div className="flex-row items-center justify-center">
                         <img src={image} alt="Visualização" className="max-w-full max-h-[70vh] rounded mb-4" />
+                        <p className="font-bold">Referência:</p>
+                        <p className="border-gray-500 bg-gray-50 my-2 border rounded-md px-3 py-2 w-[100%]">{imageRef}</p>
                     </div>
                 </div>
             </div>
